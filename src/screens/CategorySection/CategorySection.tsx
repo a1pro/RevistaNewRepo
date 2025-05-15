@@ -28,7 +28,7 @@ const CategorySection: React.FC = () => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        console.error('No token found');
+        console.error('No token found !');
         return;
       }
 
