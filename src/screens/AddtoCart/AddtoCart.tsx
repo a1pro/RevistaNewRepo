@@ -24,7 +24,6 @@ interface CartItem {
   price: number;
   quantity: number;
   images: string[];
-  // Add other fields as needed
 }
 
 const AddtoCart: React.FC = () => {
@@ -73,7 +72,6 @@ const AddtoCart: React.FC = () => {
     );
   };
 
-  
 const removeItem = async (id: number) => {
   try {
     setLoading(true);
@@ -110,8 +108,6 @@ const removeItem = async (id: number) => {
     setLoading(false);
   }
 };
-
-
 
 const clearCart = async () => {
   setLoading(true);
@@ -155,8 +151,6 @@ const clearCart = async () => {
   }
 };
 
- 
-
   const getTotal = (): number => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
@@ -196,7 +190,6 @@ const clearCart = async () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Address Section */}
       <View style={styles.addressContainer}>
         <View style={{ flex: 1 }}>
           <CustomText style={styles.addressLabel}>Shipping Address</CustomText>
