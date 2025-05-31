@@ -51,7 +51,7 @@ const BottomNavigator: React.FC = () => {
           switch (route.name) {
             case 'Home':
               iconName = 'home';
-              IconComponent = Icon;
+              IconComponent = Feather;
               break;
             case 'AllCategories':
               iconName = 'dashboard';
@@ -61,11 +61,11 @@ const BottomNavigator: React.FC = () => {
               iconName = 'user';
               IconComponent = Feather;
               break;
-              case 'AddtoCart':
+            case 'AddtoCart':
               iconName = 'shopping-cart';
               IconComponent = Feather;
               break;
-               case 'Magzine':
+            case 'Magzine':
               iconName = 'book-open';
               IconComponent = Feather;
               break;
@@ -100,25 +100,22 @@ const BottomNavigator: React.FC = () => {
         component={AllCategories}
         options={{headerShown: false}}
       />
-          <Tab.Screen
+      <Tab.Screen
         name="Magzine"
         component={Magzine}
         options={{headerShown: false}}
       />
-             <Tab.Screen
+      <Tab.Screen
         name="AddtoCart"
         component={AddtoCart}
         options={{headerShown: false}}
       />
-          <Tab.Screen
+      <Tab.Screen
         name="Profile"
         component={Profile}
         options={{headerShown: false}}
       />
-     
-   
     </Tab.Navigator>
-    
   );
 };
 

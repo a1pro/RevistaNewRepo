@@ -9,7 +9,13 @@
     "start": "react-native start",
     "test": "jest"
   },
-  "dependencies": {
+  "reactNativePermissionsIOS": [
+    "Camera",
+    "PhotoLibrary",
+    "LocationWhenInUse",
+    "LocationAlways"
+  ],
+"dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-navigation/bottom-tabs": "^7.3.12",

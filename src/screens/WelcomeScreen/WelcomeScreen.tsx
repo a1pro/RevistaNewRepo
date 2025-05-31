@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Image} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
@@ -11,14 +11,6 @@ import {horizontalScale, verticalScale} from '../../utils/Metrics';
 type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 const WelcomeScreen: React.FC<Props> = ({navigation}) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('Login');
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [navigation]);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={{paddingHorizontal: horizontalScale(15)}}>

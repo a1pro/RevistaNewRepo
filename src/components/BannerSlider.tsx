@@ -1,10 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, Image, StyleSheet, View} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import { Base_Url } from '../utils/ApiUrl';
+import {Base_Url} from '../utils/ApiUrl';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 // Default fallback images
 const defaultImages = [
@@ -55,11 +55,10 @@ const BannerSlider: React.FC = () => {
         height={150}
         scrollAnimationDuration={1000}
         onSnapToItem={index => setActiveIndex(index)}
-        renderItem={({ item }) =>
+        renderItem={({item}) =>
           typeof item === 'string' ? (
-
             <Image
-              source={{ uri: item }}
+              source={{uri: item}}
               style={styles.image}
               resizeMode="stretch"
             />
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
     alignSelf: 'center',
-    marginRight:20
+    marginRight: 20,
   },
   paginationContainer: {
     position: 'absolute',

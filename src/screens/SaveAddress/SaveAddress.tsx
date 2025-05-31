@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   SafeAreaView,
@@ -7,17 +7,17 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { CustomText } from '../../components/CustomText';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {CustomText} from '../../components/CustomText';
 import COLORS from '../../utils/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './style';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Base_Url } from '../../utils/ApiUrl';
+import {Base_Url} from '../../utils/ApiUrl';
 
 type AddressType = {
   id: number | string;
@@ -29,11 +29,13 @@ type AddressType = {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SaveAddress'>;
 
-const SaveAddress: React.FC<Props> = ({ navigation }) => {
+const SaveAddress: React.FC<Props> = ({navigation}) => {
   const [addresses, setAddresses] = useState<AddressType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-  const selectedId = useSelector((state: RootState) => state.address.selectedId);
+  const selectedId = useSelector(
+    (state: RootState) => state.address.selectedId,
+  );
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -47,14 +49,11 @@ const SaveAddress: React.FC<Props> = ({ navigation }) => {
           setLoading(false);
           return;
         }
-        const res = await axios.get(
-          Base_Url.getAddress,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(Base_Url.getAddress, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         // Ensure the response is always an array
         setAddresses(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
@@ -71,20 +70,34 @@ const SaveAddress: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        <CustomText
-          type="heading"
-          color={COLORS.textColor}
-          fontWeight="bold"
-          style={styles.title}
-        >
-          Saved Addresses
-        </CustomText>
+        {/* Header with back button */}
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
+          </TouchableOpacity>
+          <CustomText
+            type="heading"
+            color={COLORS.textColor}
+            fontWeight="bold"
+            style={styles.title}>
+            Saved Addresses
+          </CustomText>
+          <View style={styles.placeholder} />
+        </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.appColor || "#0066FF"} style={{ marginTop: 40 }} />
+          <ActivityIndicator
+            size="large"
+            color={COLORS.appColor || '#0066FF'}
+            style={{marginTop: 40}}
+          />
         ) : error ? (
           <View style={styles.addressBox}>
-            <CustomText style={styles.value} color="red">{error}</CustomText>
+            <CustomText style={styles.value} color="red">
+              {error}
+            </CustomText>
           </View>
         ) : addresses.length === 0 ? (
           <View style={styles.addressBox}>
@@ -94,17 +107,21 @@ const SaveAddress: React.FC<Props> = ({ navigation }) => {
           <FlatList
             data={addresses}
             keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View
                 style={[
                   styles.addressBox,
                   item.id === selectedId && {
-                    borderColor: COLORS.appColor || "#0066FF",
+                    borderColor: COLORS.appColor || '#0066FF',
                     borderWidth: 2,
                   },
-                ]}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                ]}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: 4,
+                  }}>
                   <CustomText style={styles.label} color={COLORS.textColor}>
                     Address:
                   </CustomText>
@@ -112,29 +129,35 @@ const SaveAddress: React.FC<Props> = ({ navigation }) => {
                     <Icon
                       name="check-circle"
                       size={18}
-                      color={COLORS.appColor || "#0066FF"}
-                      style={{ marginLeft: 4 }}
+                      color={COLORS.appColor || '#0066FF'}
+                      style={{marginLeft: 4}}
                     />
                   )}
                 </View>
-                <CustomText style={styles.value}>{item.address || "N/A"}</CustomText>
+                <CustomText style={styles.value}>
+                  {item.address || 'N/A'}
+                </CustomText>
                 <CustomText style={styles.label} color={COLORS.textColor}>
                   City:
                 </CustomText>
-                <CustomText style={styles.value}>{item.city || "N/A"}</CustomText>
+                <CustomText style={styles.value}>
+                  {item.city || 'N/A'}
+                </CustomText>
                 <CustomText style={styles.label} color={COLORS.textColor}>
                   Postcode:
                 </CustomText>
-                <CustomText style={styles.value}>{item.zip || "N/A"}</CustomText>
+                <CustomText style={styles.value}>
+                  {item.zip || 'N/A'}
+                </CustomText>
                 <CustomText style={styles.label} color={COLORS.textColor}>
                   Phone:
                 </CustomText>
-                <CustomText style={styles.value}>{item.phone || "N/A"}</CustomText>
-
-              
+                <CustomText style={styles.value}>
+                  {item.phone || 'N/A'}
+                </CustomText>
               </View>
             )}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{paddingBottom: 20}}
           />
         )}
       </View>

@@ -1,4 +1,4 @@
-import { Category } from "../screens/AllCategories/AllCategories";
+import {Category} from '../screens/AllCategories/AllCategories';
 
 export type Product = {
   quantity: number;
@@ -8,8 +8,8 @@ export type Product = {
   price: number;
 };
 
-
 export type RootStackParamList = {
+  Splash: undefined;
   Welcome: undefined;
   Login: undefined;
   Register: undefined;
@@ -20,20 +20,18 @@ export type RootStackParamList = {
   Home: undefined;
   Dashboard: undefined;
   HomemadeProducts: undefined;
-   AllCategories: undefined;
-  SubCategories: { category: Category };
-  Details: { subCategory: string };
-  ProductDetails: { product: Product };
-  Profile:undefined;
-  AddtoCart:undefined;
-  Magzine:undefined;
-  EditProfile:undefined;
-  WishList:undefined;
-  Address:undefined;
-  Order:undefined;
-  Language:undefined;
-  SaveAddress:undefined;
-  Terms:undefined;
+  AllCategories: undefined;
+  SubCategories: {category: Category};
+  Details: {subCategory: string};
+  ProductDetails: {product: Product};
+  Profile: undefined;
+  AddtoCart: undefined;
+  Magzine: undefined;
+  EditProfile: undefined;
+  WishList: undefined;
+  Address: undefined;
+  Order: undefined;
+  Language: undefined;
+  SaveAddress: undefined;
+  Terms: undefined;
 };
-
-

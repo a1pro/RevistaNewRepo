@@ -12,43 +12,16 @@ import CustomInput from '../../components/CustomInput';
 import {KeyboardAvoidingContainer} from '../../components/KeyboardAvoidingComponent';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
-import {loginUser} from '../../service/AuthService';
 import {loginValidationSchema} from '../../utils/loginValidation';
 import {Formik} from 'formik';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
+import {useAuth} from '../../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({navigation}) => {
-  // const handleLogin = async (email: string, password: string) => {
-  //   try {
-  //     const res = await loginUser(email, password);
-  //     console.log('Login Response:', res);
-
-  //     if (res.temporary_token) {
-  //       await AsyncStorage.setItem('token', res.temporary_token);
-  //       navigation.navigate('Dashboard');
-  //     } else {
-  //       throw new Error('Unexpected response');
-  //     }
-  //   } catch (error: any) {
-  //     console.log('Login Error:', {
-  //       message: error?.message,
-  //       status: error?.response?.status,
-  //       data: error?.response?.data,
-  //     });
-
-  //     Alert.alert(
-  //       'Login Failed',
-
-  //       error?.response?.data?.message ||
-  //         error?.message ||
-  //         'Something went wrong',
-  //     );
-  //   }
-  // };
+  const {login} = useAuth();
 
   const handleLogin = async (values: {email: string; password: string}) => {
     try {
@@ -63,10 +36,9 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
       });
 
       if (res?.data?.token) {
-        await AsyncStorage.setItem('token', res.data.token);
-        console.log('tokemnn',res.data.token)
+        await login(res.data.token);
         Alert.alert('Login Successful!');
-        navigation.navigate('Dashboard');
+        navigation.replace('Dashboard');
       }
     } catch (error: any) {
       console.log('Login error:', error);
@@ -144,7 +116,6 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
                     <CustomText
                       type="extraSmall"
                       color={COLORS.titleColor}
-                      
                       style={{
                         textAlign: 'right',
                         marginRight: verticalScale(10),
