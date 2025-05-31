@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
@@ -24,7 +25,7 @@ interface Category {
 }
 
 const CATEGORY_IMAGE_MAP: Record<string, any> = {
-  'perfume': IMAGES.perfume1,
+  perfume: IMAGES.perfume1,
   'mini perfume': IMAGES.perfume1,
   'hair mist': IMAGES.perfume2,
   'body perfumes': IMAGES.perfume4,
@@ -70,12 +71,17 @@ const CategorySection: React.FC = () => {
 
   const renderCategory = ({item}: {item: Category}) => {
     const isValidApiIcon = item.icon && item.icon !== 'def.png';
-    const staticImage = CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
+
+    // Get the static image from the map
+    const staticImage =
+      CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
+
+
     let imageSource;
     if (isValidApiIcon) {
       imageSource = item.icon.startsWith('http')
-        ? { uri: item.icon }
-        : { uri: ICON_BASE_URL + item.icon };
+        ? {uri: item.icon}
+        : {uri: ICON_BASE_URL + item.icon};
     } else if (staticImage) {
       imageSource = staticImage;
     } else {
@@ -85,11 +91,7 @@ const CategorySection: React.FC = () => {
     return (
       <View style={styles.categoryBox}>
         <View style={styles.imageGrid}>
-          <Image
-            source={imageSource}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <Image source={imageSource} style={styles.image} resizeMode="cover" />
         </View>
         <View style={styles.labelRow}>
           <Text style={styles.categoryText}>{item.name}</Text>
@@ -102,30 +104,35 @@ const CategorySection: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Popular Categories</Text>
-        <TouchableOpacity style={styles.seeAllButton}>
-          <Text style={styles.seeAllText}>See All</Text>
-          <VectorIcon
-            size={30}
-            type="Ionicons"
-            name="arrow-forward-circle"
-            color={COLORS.black}
-            style={{marginLeft: verticalScale(10)}}
+
+    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Popular Categories</Text>
+          <TouchableOpacity style={styles.seeAllButton}>
+            <Text style={styles.seeAllText}>See All</Text>
+            <VectorIcon
+              size={30}
+              type="Ionicons"
+              name="arrow-forward-circle"
+              color={COLORS.black}
+              style={{marginLeft: verticalScale(10)}}
+            />
+          </TouchableOpacity>
+        </View>
+        <View>
+          <FlatList
+            data={categories}
+            keyExtractor={item => item.id}
+            renderItem={renderCategory}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+
           />
-        </TouchableOpacity>
+        </View>
       </View>
-      <View>
-        <FlatList
-          data={categories}
-          keyExtractor={item => item.id}
-          renderItem={renderCategory}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen/RegisterScreen';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../types';
+import SplashScreen from '../screens/SplashScreen/SplashScreen';
 import WelcomeScreen from '../screens/WelcomeScreen/WelcomeScreen';
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
 import PasswordRecovery from '../screens/ForgotPassword/PasswordRecovery';
@@ -27,7 +28,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const AppNavigator = () => (
   <NavigationContainer>
     <SafeAreaProvider>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator initialRouteName="Splash">
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
@@ -58,12 +64,12 @@ const AppNavigator = () => (
           component={NewPassword}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="Details"
           component={Details}
           options={{headerShown: false}}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="SubCategories"
           component={SubCategories}
           options={{headerShown: false}}
@@ -79,44 +85,41 @@ const AppNavigator = () => (
           component={BottomNavigator}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="EditProfile"
           component={EditProfile}
           options={{headerShown: false}}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="WishList"
           component={WishList}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="Order"
           component={Order}
           options={{headerShown: false}}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="Language"
           component={Language}
           options={{headerShown: false}}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="SaveAddress"
           component={SaveAddress}
           options={{headerShown: false}}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="Address"
           component={Address}
           options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Terms"
           component={Terms}
           options={{headerShown: false}}
         />
-       
-        
-
       </Stack.Navigator>
     </SafeAreaProvider>
   </NavigationContainer>

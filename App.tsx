@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
 import 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
-import { Platform, Alert } from 'react-native';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
-
+import {Platform, Alert, LogBox} from 'react-native';
+import {request, PERMISSIONS} from 'react-native-permissions';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
+import {AuthProvider} from './src/context/AuthContext';
+LogBox.ignoreAllLogs();
 const requestAppPermissions = async () => {
   try {
     if (Platform.OS === 'android') {
@@ -20,11 +21,14 @@ const requestAppPermissions = async () => {
         await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
       }
     } else if (Platform.OS === 'ios') {
-      await request(PERMISSIONS.IOS.CAMERA);
-      await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      // await request(PERMISSIONS.IOS.CAMERA);
+      // await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
     }
   } catch (error) {
-    Alert.alert('Permission Error', 'There was a problem requesting permissions.');
+    Alert.alert(
+      'Permission Error',
+      'There was a problem requesting permissions.',
+    );
   }
 };
 
@@ -35,9 +39,11 @@ export default function App() {
 
   return (
     <Provider store={store}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppNavigator />
-    </GestureHandlerRootView>
+      <AuthProvider>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <AppNavigator />
+        </GestureHandlerRootView>
+      </AuthProvider>
     </Provider>
   );
 }
