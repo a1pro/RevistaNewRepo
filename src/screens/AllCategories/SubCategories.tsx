@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Image, // <-- Add this import
+  Image,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types';

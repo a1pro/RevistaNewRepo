@@ -70,9 +70,8 @@ const AllCategories: React.FC<Props> = ({ navigation }) => {
       <Image
         source={{ uri: item.image }}
         style={styles.image}
-        defaultSource={IMAGES.beauty} // Local fallback for iOS
+        defaultSource={IMAGES.beauty} 
         onError={(e) => {
-          // fallback for Android
           e.currentTarget.setNativeProps({
             src: [{ uri: DEFAULT_ICON_URL }]
           });

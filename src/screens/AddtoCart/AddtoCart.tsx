@@ -199,15 +199,11 @@ const clearCart = async () => {
           <Icon name="edit" size={20} color="#007bff" />
         </TouchableOpacity>
       </View>
-
-      {/* Cart Items */}
       <FlatList
         data={cartItems}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
       />
-
-      {/* Total & Checkout */}
       <CustomText style={styles.totalText}>Total: ${getTotal().toFixed(2)}</CustomText>
       <View style={styles.footer}>
         <TouchableOpacity style={styles.checkoutBtn} onPress={() => Alert.alert('Proceeding to checkout')}>

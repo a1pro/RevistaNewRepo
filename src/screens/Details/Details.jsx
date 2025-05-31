@@ -12,7 +12,6 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import styles from './style';
-// import Vector from 'react-native-vector-icons/Ionicons';
 import IMAGES from '../../assets/images';
 import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
@@ -84,7 +83,6 @@ const Details: React.FC<Props> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={()=>navigation.goBack()}>
             <VectorIcon

@@ -69,14 +69,10 @@ const CategorySection: React.FC = () => {
   }, []);
 
   const renderCategory = ({item}: {item: Category}) => {
-    // Check if the API icon is valid (not def.png and not empty)
     const isValidApiIcon = item.icon && item.icon !== 'def.png';
-    // Get the static image from the map
     const staticImage = CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
-
     let imageSource;
     if (isValidApiIcon) {
-      // If the icon is a full URL, use as is; else, prepend base URL
       imageSource = item.icon.startsWith('http')
         ? { uri: item.icon }
         : { uri: ICON_BASE_URL + item.icon };
@@ -107,7 +103,6 @@ const CategorySection: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Popular Categories</Text>
         <TouchableOpacity style={styles.seeAllButton}>

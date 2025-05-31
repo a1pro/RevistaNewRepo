@@ -19,7 +19,7 @@ const Magzine: React.FC<Props> = ({navigation}) => {
     return(
         <SafeAreaView style={styles.container}>
        <View style={styles.container}>
-        <Text>Magzine yo yo </Text>
+        <Text>Working on it </Text>
        </View>
         </SafeAreaView>
     )

@@ -82,8 +82,6 @@ const ForgotPassword: React.FC<Props> = ({navigation}) => {
                 )}
               </View>
             </TouchableOpacity>
-
-            {/* Email Option */}
             <View style={{paddingVertical: verticalScale(8)}} />
             <TouchableOpacity
               style={[
