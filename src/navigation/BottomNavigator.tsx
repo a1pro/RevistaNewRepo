@@ -54,8 +54,8 @@ const BottomNavigator: React.FC = () => {
               IconComponent = Feather;
               break;
             case 'AllCategories':
-              iconName = 'dashboard';
-              IconComponent = MaterialIcons;
+              iconName = 'layout';
+              IconComponent = Feather;
               break;
             case 'Profile':
               iconName = 'user';

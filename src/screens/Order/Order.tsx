@@ -8,12 +8,13 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types';
-import { CustomText } from '../../components/CustomText';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
+import {CustomText} from '../../components/CustomText';
 import COLORS from '../../utils/Colors';
 import IMAGES from '../../assets/images';
 import styles from './style';
+import VectorIcon from '../../components/VectorIcon';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Order'>;
 
@@ -44,25 +45,31 @@ const ORDERS = [
   },
 ];
 
-const Order: React.FC<Props> = ({ navigation }) => {
-  const renderOrder = ({ item }: { item: typeof ORDERS[0] }) => (
+const Order: React.FC<Props> = ({navigation}) => {
+  const renderOrder = ({item}: {item: (typeof ORDERS)[0]}) => (
     <View style={styles.orderCard}>
       <Image source={item.image} style={styles.productImage} />
-      <View style={{ flex: 1, marginLeft: 8 }}>
+      <View style={{flex: 1, marginLeft: 8}}>
         <CustomText style={styles.orderNumber}>
           Order {item.orderNumber}
         </CustomText>
-        <CustomText style={styles.deliveryType}>
-          {item.deliveryType}
-        </CustomText>
+        <CustomText style={styles.deliveryType}>{item.deliveryType}</CustomText>
         <View style={styles.statusRow}>
-          <CustomText style={styles.statusDelivered}>
-            Delivered
-          </CustomText>
-          <Icon name="check-circle" size={18} color="#2676FD" style={{ marginLeft: 4 }} />
+          <CustomText style={styles.statusDelivered}>Delivered</CustomText>
+          <Icon
+            name="check-circle"
+            size={18}
+            color="#2676FD"
+            style={{marginLeft: 4}}
+          />
         </View>
       </View>
-      <View style={{ alignItems: 'flex-end', justifyContent: 'space-between', height: 80 }}>
+      <View
+        style={{
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          height: 80,
+        }}>
         <CustomText style={styles.itemsCount}>
           {item.itemsCount} items
         </CustomText>
@@ -78,15 +85,21 @@ const Order: React.FC<Props> = ({ navigation }) => {
       <View style={styles.inner}>
         {/* Header Row */}
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <VectorIcon
+              type="AntDesign"
+              name="left"
+              size={24}
+              color={COLORS.textColor}
+            />
           </TouchableOpacity>
           <CustomText
             type="heading"
             color={COLORS.textColor}
             fontWeight="bold"
-            style={styles.headerText}
-          >
+            style={styles.headerText}>
             My Orders
           </CustomText>
         </View>
@@ -94,13 +107,12 @@ const Order: React.FC<Props> = ({ navigation }) => {
           data={ORDERS}
           keyExtractor={item => item.id}
           renderItem={renderOrder}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{paddingBottom: 20}}
           showsVerticalScrollIndicator={false}
         />
       </View>
     </SafeAreaView>
   );
 };
-
 
 export default Order;

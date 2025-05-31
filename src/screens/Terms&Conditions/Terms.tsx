@@ -6,6 +6,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import styles from './style';
 import COLORS from '../../utils/Colors';
 import {CustomText} from '../../components/CustomText';
+import VectorIcon from '../../components/VectorIcon';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Terms'>;
 const Terms: React.FC<Props> = ({navigation}) => {
@@ -17,7 +18,12 @@ const Terms: React.FC<Props> = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
-            <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
+            <VectorIcon
+              type="AntDesign"
+              name="left"
+              size={24}
+              color={COLORS.textColor}
+            />
           </TouchableOpacity>
           <CustomText
             type="heading"

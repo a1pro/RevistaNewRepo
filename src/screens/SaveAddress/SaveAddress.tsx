@@ -18,6 +18,7 @@ import styles from './style';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Base_Url} from '../../utils/ApiUrl';
+import VectorIcon from '../../components/VectorIcon';
 
 type AddressType = {
   id: number | string;
@@ -75,7 +76,12 @@ const SaveAddress: React.FC<Props> = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
-            <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
+            <VectorIcon
+              type="AntDesign"
+              name="left"
+              size={24}
+              color={COLORS.textColor}
+            />
           </TouchableOpacity>
           <CustomText
             type="heading"

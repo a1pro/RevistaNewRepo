@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
@@ -16,7 +16,12 @@ import {CustomText} from '../../components/CustomText';
 import CustomInput from '../../components/CustomInput';
 import COLORS from '../../utils/Colors';
 import {horizontalScale, verticalScale} from '../../utils/Metrics';
-import { ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {
+  ImagePickerResponse,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import VectorIcon from '../../components/VectorIcon';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EditProfile'>;
 
@@ -24,7 +29,7 @@ const EditProfile: React.FC<Props> = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-    const [profileImage, setProfileImage] = useState<any>(IMAGES.profile);
+  const [profileImage, setProfileImage] = useState<any>(IMAGES.profile);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleImagePick = (type: 'camera' | 'gallery') => {
@@ -37,117 +42,139 @@ const EditProfile: React.FC<Props> = ({navigation}) => {
     if (type === 'camera') {
       launchCamera(options, (response: ImagePickerResponse) => {
         if (response.assets && response.assets.length > 0) {
-          setProfileImage({ uri: response.assets[0].uri });
+          setProfileImage({uri: response.assets[0].uri});
         }
       });
     } else {
       launchImageLibrary(options, (response: ImagePickerResponse) => {
         if (response.assets && response.assets.length > 0) {
-          setProfileImage({ uri: response.assets[0].uri });
+          setProfileImage({uri: response.assets[0].uri});
         }
       });
     }
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
-      </TouchableOpacity>
-
-      {/* Header */}
-      <CustomText
-        type="heading"
-        color={COLORS.textColor}
-        fontWeight="bold"
-        style={styles.headerText}
-      >
-        My Profile
-      </CustomText>
-
-      {/* Profile Image with Edit Icon */}
-      <View style={styles.profileSection}>
-        <Image source={profileImage} style={styles.profileImage} />
+      <View style={styles.container}>
+        {/* Back Button */}
         <TouchableOpacity
-          style={styles.editIconContainer}
-          onPress={() => setModalVisible(true)}
-        >
-          <Icon name="edit" size={18} color="#fff" />
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <VectorIcon
+            type="AntDesign"
+            name="left"
+            size={24}
+            color={COLORS.textColor}
+          />
         </TouchableOpacity>
-      </View>
 
-      {/* Name Input */}
-      <CustomText style={styles.label} fontWeight="bold" color={COLORS.textColor}>
-        Name
-      </CustomText>
-      <CustomInput
-        value={name}
-        placeholder="Name"
-        onChangeText={setName}
-        style={styles.input}
-      />
-
-      {/* Email Input */}
-      <CustomText style={styles.label} fontWeight="bold" color={COLORS.textColor}>
-        Email
-      </CustomText>
-      <CustomInput
-        value={email}
-        placeholder="Email"
-        keyboardType="email-address"
-        onChangeText={setEmail}
-        style={styles.input}
-      />
-
-      {/* Password Input */}
-      <CustomText style={styles.label} fontWeight="bold" color={COLORS.textColor}>
-        Password
-      </CustomText>
-      <CustomInput
-        value={password}
-        placeholder="Password"
-        type='password'
-        onChangeText={setPassword}
-        style={styles.input}
-      />
-
-      {/* Save Changes Button */}
-      <TouchableOpacity style={styles.saveButton}>
-        <CustomText color="#fff" fontWeight="bold" style={styles.saveButtonText}>
-          Save Changes
+        {/* Header */}
+        <CustomText
+          type="heading"
+          color={COLORS.textColor}
+          fontWeight="bold"
+          style={styles.headerText}>
+          My Profile
         </CustomText>
-      </TouchableOpacity>
-          <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => handleImagePick('camera')}
-            >
-              <CustomText color={COLORS.textColor} fontWeight="bold">Camera</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => handleImagePick('gallery')}
-            >
-              <CustomText color={COLORS.textColor} fontWeight="bold">Gallery</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalOption, { borderBottomWidth: 0 }]}
-              onPress={() => setModalVisible(false)}
-            >
-              <CustomText color="red" fontWeight="bold">Cancel</CustomText>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Modal>
+
+        {/* Profile Image with Edit Icon */}
+        <View style={styles.profileSection}>
+          <Image source={profileImage} style={styles.profileImage} />
+          <TouchableOpacity
+            style={styles.editIconContainer}
+            onPress={() => setModalVisible(true)}>
+            <Icon name="edit" size={18} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Name Input */}
+        <CustomText
+          style={styles.label}
+          fontWeight="bold"
+          color={COLORS.textColor}>
+          Name
+        </CustomText>
+        <CustomInput
+          value={name}
+          placeholder="Name"
+          onChangeText={setName}
+          style={styles.input}
+        />
+
+        {/* Email Input */}
+        <CustomText
+          style={styles.label}
+          fontWeight="bold"
+          color={COLORS.textColor}>
+          Email
+        </CustomText>
+        <CustomInput
+          value={email}
+          placeholder="Email"
+          keyboardType="email-address"
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+
+        {/* Password Input */}
+        <CustomText
+          style={styles.label}
+          fontWeight="bold"
+          color={COLORS.textColor}>
+          Password
+        </CustomText>
+        <CustomInput
+          value={password}
+          placeholder="Password"
+          type="password"
+          onChangeText={setPassword}
+          style={styles.input}
+        />
+
+        {/* Save Changes Button */}
+        <TouchableOpacity style={styles.saveButton}>
+          <CustomText
+            color="#fff"
+            fontWeight="bold"
+            style={styles.saveButtonText}>
+            Save Changes
+          </CustomText>
+        </TouchableOpacity>
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setModalVisible(false)}>
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setModalVisible(false)}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => handleImagePick('camera')}>
+                <CustomText color={COLORS.textColor} fontWeight="bold">
+                  Camera
+                </CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => handleImagePick('gallery')}>
+                <CustomText color={COLORS.textColor} fontWeight="bold">
+                  Gallery
+                </CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalOption, {borderBottomWidth: 0}]}
+                onPress={() => setModalVisible(false)}>
+                <CustomText color="red" fontWeight="bold">
+                  Cancel
+                </CustomText>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 };
@@ -216,7 +243,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
   },
-    modalOverlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'flex-end',

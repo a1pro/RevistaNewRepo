@@ -19,7 +19,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import IMAGES from '../../assets/images';
 import VectorIcon from '../../components/VectorIcon';
-import {verticalScale} from '../../utils/Metrics';
 import COLORS from '../../utils/Colors';
 import {addCartItem} from '../../redux/slice/cartSlice';
 import {useDispatch, useSelector} from 'react-redux';

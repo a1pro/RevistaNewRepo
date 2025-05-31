@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,21 +9,22 @@ import {
   Platform,
   PermissionsAndroid,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types';
-import { CustomText } from '../../components/CustomText';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
+import {CustomText} from '../../components/CustomText';
 import CustomInput from '../../components/CustomInput';
 import COLORS from '../../utils/Colors';
-import { useDispatch } from 'react-redux';
-import { addAddress } from '../../redux/slice/addressSlice';
+import {useDispatch} from 'react-redux';
+import {addAddress} from '../../redux/slice/addressSlice';
 import styles from './style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
+import VectorIcon from '../../components/VectorIcon';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Address'>;
 
-const Address: React.FC<Props> = ({ navigation }) => {
+const Address: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [address, setAddress] = useState('');
@@ -35,7 +36,7 @@ const Address: React.FC<Props> = ({ navigation }) => {
   const [postcode, setPostcode] = useState('');
   const [phone, setPhone] = useState('');
   const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState(''); 
+  const [longitude, setLongitude] = useState('');
 
   useEffect(() => {
     const getLocation = async () => {
@@ -47,10 +48,13 @@ const Address: React.FC<Props> = ({ navigation }) => {
               title: 'Location Permission',
               message: 'App needs access to your location',
               buttonPositive: 'OK',
-            }
+            },
           );
           if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            Alert.alert('Permission denied', 'Location permission is required to save address');
+            Alert.alert(
+              'Permission denied',
+              'Location permission is required to save address',
+            );
             return;
           }
         } catch (err) {
@@ -60,14 +64,14 @@ const Address: React.FC<Props> = ({ navigation }) => {
       }
 
       Geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           setLatitude(position.coords.latitude.toString());
           setLongitude(position.coords.longitude.toString());
         },
-        (error) => {
+        error => {
           Alert.alert('Location Error', error.message);
         },
-        { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+        {enableHighAccuracy: false, timeout: 15000, maximumAge: 10000},
       );
     };
 
@@ -75,8 +79,22 @@ const Address: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const handleSave = async () => {
-    if (!address || !city || !postcode || !phone || !address1 || !country || !billing || !name || !latitude || !longitude) {
-      Alert.alert('Error', 'Please fill all fields and ensure location is enabled');
+    if (
+      !address ||
+      !city ||
+      !postcode ||
+      !phone ||
+      !address1 ||
+      !country ||
+      !billing ||
+      !name ||
+      !latitude ||
+      !longitude
+    ) {
+      Alert.alert(
+        'Error',
+        'Please fill all fields and ensure location is enabled',
+      );
       return;
     }
 
@@ -103,22 +121,36 @@ const Address: React.FC<Props> = ({ navigation }) => {
         longitude: longitude,
       };
 
-      const response = await fetch('https://www.revista-sa.com/api/v4/customer/address/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        'https://www.revista-sa.com/api/v4/customer/address/add',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        dispatch(addAddress({
-          address, city, postcode, phone, id: '',
-          name, country, billing, address1, latitude, longitude
-        }));
+        dispatch(
+          addAddress({
+            address,
+            city,
+            postcode,
+            phone,
+            id: '',
+            name,
+            country,
+            billing,
+            address1,
+            latitude,
+            longitude,
+          }),
+        );
         Alert.alert('Success', 'Address saved successfully!');
         navigation.goBack();
       } else {
@@ -132,12 +164,23 @@ const Address: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
+      <ScrollView contentContainerStyle={{paddingBottom: 50}}>
         <View style={styles.inner}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-ios" size={24} color={COLORS.textColor} />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <VectorIcon
+              type="AntDesign"
+              name="left"
+              size={24}
+              color={COLORS.textColor}
+            />
           </TouchableOpacity>
-          <CustomText type="heading" fontWeight="bold" color={COLORS.textColor} style={styles.title}>
+          <CustomText
+            type="heading"
+            fontWeight="bold"
+            color={COLORS.textColor}
+            style={styles.title}>
             Address
           </CustomText>
 
@@ -224,7 +267,10 @@ const Address: React.FC<Props> = ({ navigation }) => {
           </CustomText> */}
 
           <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-            <CustomText color="#fff" fontWeight="bold" style={styles.saveBtnText}>
+            <CustomText
+              color="#fff"
+              fontWeight="bold"
+              style={styles.saveBtnText}>
               Save Changes
             </CustomText>
           </TouchableOpacity>
