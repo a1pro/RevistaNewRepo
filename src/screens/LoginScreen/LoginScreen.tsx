@@ -62,8 +62,9 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         },
       });
 
-      if (res?.data?.temporary_token) {
-        await AsyncStorage.setItem('token', res.data.temporary_token);
+      if (res?.data?.token) {
+        await AsyncStorage.setItem('token', res.data.token);
+        console.log('tokemnn',res.data.token)
         Alert.alert('Login Successful!');
         navigation.navigate('Dashboard');
       }
@@ -143,6 +144,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
                     <CustomText
                       type="extraSmall"
                       color={COLORS.titleColor}
+                      
                       style={{
                         textAlign: 'right',
                         marginRight: verticalScale(10),

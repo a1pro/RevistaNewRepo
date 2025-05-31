@@ -13,13 +13,30 @@ import {verticalScale} from '../../utils/Metrics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
+import IMAGES from '../../assets/images';
 
 interface Category {
+  product_count: string;
   id: string;
   name: string;
   count: number;
   icon: string;
 }
+
+const CATEGORY_IMAGE_MAP: Record<string, any> = {
+  'perfume': IMAGES.perfume1,
+  'mini perfume': IMAGES.perfume1,
+  'hair mist': IMAGES.perfume2,
+  'body perfumes': IMAGES.perfume4,
+  'new perfumes': IMAGES.perfume5,
+  'unisex perfumes': IMAGES.perfume6,
+  'musk perfumes': IMAGES.perfume7,
+  'oud perfumes': IMAGES.perfume9,
+  "children's perfumes": IMAGES.perfume8,
+};
+
+const ICON_BASE_URL = 'https://www.revista-sa.com/public/storage/category/';
+const DEFAULT_ICON_URL = ICON_BASE_URL + 'def.png';
 
 const CategorySection: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -40,7 +57,6 @@ const CategorySection: React.FC = () => {
       });
 
       if (res.data) {
-        console.log('Category Data', res.data);
         setCategories(res.data);
       }
     } catch (error) {
@@ -52,29 +68,48 @@ const CategorySection: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const renderCategory = ({item}: {item: Category}) => (
-    <View style={styles.categoryBox}>
-      <View style={styles.imageGrid}>
-        <Image
-          source={{uri: item.icon}}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      </View>
-      <View style={styles.labelRow}>
-        <Text style={styles.categoryText}>{item.name}</Text>
-        <View style={styles.countPill}>
-          <Text style={styles.countText}>{item.count}</Text>
+  const renderCategory = ({item}: {item: Category}) => {
+    // Check if the API icon is valid (not def.png and not empty)
+    const isValidApiIcon = item.icon && item.icon !== 'def.png';
+    // Get the static image from the map
+    const staticImage = CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
+
+    let imageSource;
+    if (isValidApiIcon) {
+      // If the icon is a full URL, use as is; else, prepend base URL
+      imageSource = item.icon.startsWith('http')
+        ? { uri: item.icon }
+        : { uri: ICON_BASE_URL + item.icon };
+    } else if (staticImage) {
+      imageSource = staticImage;
+    } else {
+      imageSource = IMAGES.perfume10;
+    }
+
+    return (
+      <View style={styles.categoryBox}>
+        <View style={styles.imageGrid}>
+          <Image
+            source={imageSource}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <View style={styles.labelRow}>
+          <Text style={styles.categoryText}>{item.name}</Text>
+          <View style={styles.countPill}>
+            <Text style={styles.countText}>{item.product_count}</Text>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Categories</Text>
+        <Text style={styles.title}>Popular Categories</Text>
         <TouchableOpacity style={styles.seeAllButton}>
           <Text style={styles.seeAllText}>See All</Text>
           <VectorIcon
@@ -86,19 +121,9 @@ const CategorySection: React.FC = () => {
           />
         </TouchableOpacity>
       </View>
-
-      {/* Grid List */}
       <View>
         <FlatList
-          data={categories.slice(0, 2)}
-          keyExtractor={item => item.id}
-          renderItem={renderCategory}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{marginBottom: 12}}
-        />
-        <FlatList
-          data={categories.slice(2)}
+          data={categories}
           keyExtractor={item => item.id}
           renderItem={renderCategory}
           horizontal

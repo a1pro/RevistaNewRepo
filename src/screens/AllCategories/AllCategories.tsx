@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,46 +6,89 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
+  ActivityIndicator,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {RootStackParamList} from '../../types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
+import { verticalScale } from '../../utils/Metrics';
+import axios from 'axios';
+import { Base_Url } from '../../utils/ApiUrl';
+import IMAGES from '../../assets/images';
 
-type Category = {
+type SubCategory = {
   id: number;
   title: string;
   image: string;
 };
 
-const categories: Category[] = [
-  {id: 1, title: 'Sun Protection', image: 'https://i.imgur.com/FtLNXIm.png'},
-  {id: 2, title: 'Devices', image: 'https://i.imgur.com/Dw9MuZy.png'},
-  {id: 3, title: 'Perfumes', image: 'https://i.imgur.com/8fGM9Fb.png'},
-  {id: 4, title: 'Oral and Dental', image: 'https://i.imgur.com/COeN2TS.png'},
-  {id: 5, title: 'Body Care', image: 'https://i.imgur.com/X1rHJyy.png'},
-  {id: 6, title: 'Hand Care', image: 'https://i.imgur.com/3RRee5x.png'},
-  {id: 7, title: 'Foot Care', image: 'https://i.imgur.com/ilx45sy.png'},
-  {id: 8, title: 'Women’s Care', image: 'https://i.imgur.com/1k2r44a.png'},
-  {
-    id: 9,
-    title: 'Mother and Child care',
-    image: 'https://i.imgur.com/Yeh44zk.png',
-  },
-  {id: 10, title: 'Men’s Care', image: 'https://i.imgur.com/FXuA0uE.png'},
-  {id: 11, title: 'Facial Care', image: 'https://i.imgur.com/sq5UCrX.png'},
-  {id: 12, title: 'Home Fragrance', image: 'https://i.imgur.com/RM9XLHp.png'},
-  {id: 13, title: 'Medicine', image: 'https://i.imgur.com/yAVOXWW.png'},
-  {id: 14, title: 'Beauty', image: 'https://i.imgur.com/oA7TD5I.png'},
-];
+export type Category = {
+  id: number;
+  title: string;
+  image: string;
+  subCategories: SubCategory[];
+};
+
 type Props = NativeStackScreenProps<RootStackParamList, 'AllCategories'>;
-const AllCategories: React.FC<Props> = () => {
-  const renderItem = ({item}: {item: Category}) => (
-    <TouchableOpacity style={styles.card}>
-      <Image source={{uri: item.image}} style={styles.image} />
-      <Text style={styles.title}>{item.title}</Text>
-      <Icon name="chevron-right" size={24} color="#000" />
+
+const ITEM_WIDTH = Dimensions.get('window').width / 3 - 24;
+const DEFAULT_ICON_URL = 'https://www.revista-sa.com/public/storage/category/def.png';
+
+const AllCategories: React.FC<Props> = ({ navigation }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(Base_Url.allcategory);
+        const mappedCategories: Category[] = res.data.map((cat: any) => ({
+          id: cat.id,
+          title: cat.name,
+          image: cat.icon || DEFAULT_ICON_URL,
+          subCategories: (cat.childes || []).map((sub: any) => ({
+            id: sub.id,
+            title: sub.name,
+            image: sub.icon || DEFAULT_ICON_URL,
+          })),
+        }));
+        setCategories(mappedCategories);
+      } catch (error) {
+        setCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const renderItem = ({ item }: { item: Category }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('SubCategories', { category: item })}
+    >
+      <Image
+        source={{ uri: item.image }}
+        style={styles.image}
+        defaultSource={IMAGES.beauty} // Local fallback for iOS
+        onError={(e) => {
+          // fallback for Android
+          e.currentTarget.setNativeProps({
+            src: [{ uri: DEFAULT_ICON_URL }]
+          });
+        }}
+      />
+      <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -54,6 +97,8 @@ const AllCategories: React.FC<Props> = () => {
         data={categories}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
+        numColumns={3}
+        contentContainerStyle={styles.flatListContent}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -61,34 +106,45 @@ const AllCategories: React.FC<Props> = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#f9f9f9'},
+  container: { flex: 1, backgroundColor: '#f9f9f9' },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     margin: 16,
+    textAlign: "center",
     color: '#000',
+    marginBottom: verticalScale(30)
+  },
+  flatListContent: {
+    paddingHorizontal: 8,
+    paddingBottom: 16,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginBottom: 10,
-    padding: 12,
-    borderRadius: 10,
+    alignItems: 'center',
+    margin: 8,
+    borderRadius: 12,
+    paddingVertical: 26,
+    width: ITEM_WIDTH,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
   image: {
-    width: 42,
-    height: 42,
-    borderRadius: 8,
-    marginRight: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginBottom: 8,
+    resizeMode: 'cover',
+    backgroundColor: '#eee'
   },
   title: {
-    flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
-    color: '#000',
+    color: '#333',
+    textAlign: 'center',
   },
 });
 

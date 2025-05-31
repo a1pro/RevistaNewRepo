@@ -2,16 +2,20 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import {View} from 'react-native';
 import type {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import AllCategories from '../screens/AllCategories/AllCategories';
+import Profile from '../screens/Profile/Profile';
+import AddtoCart from '../screens/AddtoCart/AddtoCart';
+import Magzine from '../screens/Book/Magzine';
 
 // Define types for route names
 type TabParamList = {
   Home: undefined;
-  Chat: undefined;
-  Review: undefined;
+  AddtoCart: undefined;
+  Magzine: undefined;
   Profile: undefined;
   AllCategories: undefined;
 };
@@ -24,9 +28,9 @@ const BottomNavigator: React.FC = () => {
       screenOptions={({route}): BottomTabNavigationOptions => ({
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#0C18BF',
-        tabBarInactiveTintColor: '#0C18BF',
+        tabBarInactiveTintColor: '#214357',
         tabBarLabelStyle: {
-          fontSize: 13,
+          fontSize: 12,
           color: '#0C18BF',
           marginTop: 5,
         },
@@ -34,10 +38,10 @@ const BottomNavigator: React.FC = () => {
           backgroundColor: '#ffff',
           borderTopWidth: 0,
           shadowRadius: 10,
-          paddingTop: 15,
+          paddingTop: 5,
           paddingBottom: 5,
-          height: 80,
-          marginHorizontal: 10,
+          height: 70,
+          // marginHorizontal: 10,
           //   borderRadius: 20,
         },
         tabBarIcon: ({focused, color}) => {
@@ -53,9 +57,17 @@ const BottomNavigator: React.FC = () => {
               iconName = 'dashboard';
               IconComponent = MaterialIcons;
               break;
-            case 'Review':
-              iconName = 'thumbs-up-down';
-              IconComponent = MaterialIcons;
+            case 'Profile':
+              iconName = 'user';
+              IconComponent = Feather;
+              break;
+              case 'AddtoCart':
+              iconName = 'shopping-cart';
+              IconComponent = Feather;
+              break;
+               case 'Magzine':
+              iconName = 'book-open';
+              IconComponent = Feather;
               break;
 
             default:
@@ -73,7 +85,7 @@ const BottomNavigator: React.FC = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <IconComponent name={iconName} size={26} color={color} />
+              <IconComponent name={iconName} size={22} color={color} />
             </View>
           );
         },
@@ -88,7 +100,25 @@ const BottomNavigator: React.FC = () => {
         component={AllCategories}
         options={{headerShown: false}}
       />
+          <Tab.Screen
+        name="Magzine"
+        component={Magzine}
+        options={{headerShown: false}}
+      />
+             <Tab.Screen
+        name="AddtoCart"
+        component={AddtoCart}
+        options={{headerShown: false}}
+      />
+          <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{headerShown: false}}
+      />
+     
+   
     </Tab.Navigator>
+    
   );
 };
 

@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
-    // justifyContent: '',
   },
   logoImg: {
     width: '50%',
@@ -17,8 +16,27 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     marginVertical: verticalScale(20),
+  },
+   searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f4f4f4',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    marginVertical: 10,
+    height: 44,
+    position: 'relative',
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: COLORS.black,
+    paddingVertical: 0,
   },
 });
 

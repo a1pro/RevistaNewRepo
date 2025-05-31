@@ -11,6 +11,16 @@ import PasswordRecovery from '../screens/ForgotPassword/PasswordRecovery';
 import NewPassword from '../screens/ForgotPassword/NewPassword';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import BottomNavigator from './BottomNavigator';
+import Details from '../screens/Details/Details';
+import ProductDetails from '../screens/ProductDetails/ProductDetails';
+import EditProfile from '../screens/Profile/EditProfile';
+import WishList from '../screens/Profile/WishList';
+import Address from '../screens/Address/Address';
+import Order from '../screens/Order/Order';
+import Language from '../screens/Language/Language';
+import SaveAddress from '../screens/SaveAddress/SaveAddress';
+import Terms from '../screens/Terms&Conditions/Terms';
+import SubCategories from '../screens/AllCategories/SubCategories';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -48,11 +58,65 @@ const AppNavigator = () => (
           component={NewPassword}
           options={{headerShown: false}}
         />
+          <Stack.Screen
+          name="Details"
+          component={Details}
+          options={{headerShown: false}}
+        />
+           <Stack.Screen
+          name="SubCategories"
+          component={SubCategories}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="ProductDetails"
+          component={ProductDetails}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="Dashboard"
           component={BottomNavigator}
           options={{headerShown: false}}
         />
+          <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{headerShown: false}}
+        />
+           <Stack.Screen
+          name="WishList"
+          component={WishList}
+          options={{headerShown: false}}
+        />
+          <Stack.Screen
+          name="Order"
+          component={Order}
+          options={{headerShown: false}}
+        />
+          <Stack.Screen
+          name="Language"
+          component={Language}
+          options={{headerShown: false}}
+        />
+           <Stack.Screen
+          name="SaveAddress"
+          component={SaveAddress}
+          options={{headerShown: false}}
+        />
+           <Stack.Screen
+          name="Address"
+          component={Address}
+          options={{headerShown: false}}
+        />
+         <Stack.Screen
+          name="Terms"
+          component={Terms}
+          options={{headerShown: false}}
+        />
+       
+        
+
       </Stack.Navigator>
     </SafeAreaProvider>
   </NavigationContainer>

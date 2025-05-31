@@ -1,10 +1,10 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {Dimensions, Image, StyleSheet, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import {Base_Url} from '../utils/ApiUrl';
+import { Base_Url } from '../utils/ApiUrl';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 // Default fallback images
 const defaultImages = [
@@ -26,8 +26,9 @@ const BannerSlider: React.FC = () => {
       });
 
       if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-        console.log('API Banner Images', res.data);
-        setBannerImages(res.data);
+        // Map to just the photo URLs
+        const images = res.data.map(item => item.photo);
+        setBannerImages(images);
       } else {
         console.log('Empty or invalid banner data, using default images');
         setBannerImages([]);
@@ -41,8 +42,6 @@ const BannerSlider: React.FC = () => {
   useEffect(() => {
     BannerApi();
   }, []);
-
-  // Final images to be displayed
   const imagesToDisplay =
     bannerImages.length > 0 ? bannerImages : defaultImages;
 
@@ -56,13 +55,13 @@ const BannerSlider: React.FC = () => {
         height={150}
         scrollAnimationDuration={1000}
         onSnapToItem={index => setActiveIndex(index)}
-        renderItem={({item}) =>
+        renderItem={({ item }) =>
           typeof item === 'string' ? (
-            // For API image (URL)
+
             <Image
-              source={{uri: item}}
+              source={{ uri: item }}
               style={styles.image}
-              resizeMode="cover"
+              resizeMode="stretch"
             />
           ) : (
             // For local image
@@ -93,6 +92,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
     alignSelf: 'center',
+    marginRight:20
   },
   paginationContainer: {
     position: 'absolute',

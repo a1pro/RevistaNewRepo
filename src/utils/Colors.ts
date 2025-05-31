@@ -11,6 +11,7 @@ const COLORS = {
   smsBack: '#E5EBFC',
   emailBck: '#FFEBEB',
   red: 'red',
+  white:'#ffff'
 };
 
 export default COLORS;
