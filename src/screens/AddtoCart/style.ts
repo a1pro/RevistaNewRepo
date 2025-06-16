@@ -35,6 +35,15 @@ export default StyleSheet.create({
     height: 60,
     borderRadius: 10,
   },
+  emptyCartContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+emptyCartText: {
+  fontSize: 16,
+  color: '#666',
+},
   cartTitle: {
     fontWeight: 'bold',
     fontSize: 14,

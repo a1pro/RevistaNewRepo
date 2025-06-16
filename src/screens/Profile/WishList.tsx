@@ -22,6 +22,7 @@ import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import {removeFavourite} from '../../redux/slice/favouriteSlice';
 import VectorIcon from '../../components/VectorIcon';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WishList'>;
 
@@ -82,7 +83,11 @@ const WishList: React.FC<Props> = ({navigation}) => {
       setCartLoading(item.id);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setCartLoading(null);
         return;
       }
@@ -96,7 +101,11 @@ const WishList: React.FC<Props> = ({navigation}) => {
         },
       });
       if (res.data && res.data.message === 'Successfully added!') {
-        Alert.alert('Success', res.data.message || 'Product added to cart!');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: res.data.message || 'Product added to cart!',
+        });
         dispatch(
           addCartItem({
             id: item.product_full_info.id.toString(),
@@ -107,13 +116,19 @@ const WishList: React.FC<Props> = ({navigation}) => {
           }),
         );
       } else {
-        Alert.alert('Error', res.data.message || 'Failed to add to cart.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Failed to add to cart.',
+        });
       }
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message || 'Error adding to cart.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Error adding to cart.',
+      });
+     
     } finally {
       setCartLoading(null);
     }
@@ -124,7 +139,11 @@ const WishList: React.FC<Props> = ({navigation}) => {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setLoading(false);
         return;
       }
@@ -147,19 +166,27 @@ const WishList: React.FC<Props> = ({navigation}) => {
           prev.filter(item => item.product_id !== product_id),
         );
         dispatch(removeFavourite({id: product_id}));
-        Alert.alert('Removed', 'Product removed from wishlist.');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Product removed from wishlist!',
+        });
       } else {
-        Alert.alert(
-          'Error',
-          res.data?.message || 'Failed to remove product from wishlist.',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data?.message || 'Failed to remove product from wishlist.',
+        });
+       
       }
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message ||
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message ||
           'Failed to remove product from wishlist.',
-      );
+      });
+     
     } finally {
       setLoading(false);
     }
@@ -170,7 +197,11 @@ const WishList: React.FC<Props> = ({navigation}) => {
       setClearLoading(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setClearLoading(false);
         return;
       }
@@ -189,16 +220,26 @@ const WishList: React.FC<Props> = ({navigation}) => {
           res.data.message === 'Successfully removed!')
       ) {
         setWishlistItems([]);
-        Alert.alert('Success', 'Wishlist cleared!');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Wishlist cleared!',
+        });
       } else {
-        Alert.alert('Error', res.data?.message || 'Failed to clear wishlist.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data?.message || 'Failed to clear wishlist.',
+        });
       }
     } catch (err: any) {
       console.error('Clear wishlist error:', err);
-      Alert.alert(
-        'Error',
-        err?.response?.data?.message || 'Failed to clear wishlist.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: err?.response?.data?.message || 'Failed to clear wishlist.',
+      });
+     
     } finally {
       setClearLoading(false);
     }
@@ -219,7 +260,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
   const renderItem = ({item}: {item: WishlistItem}) => {
     const imageName = getFirstImage(item.product_full_info.images);
     const imageUrl = imageName
-      ? `https://www.revista-sa.com/public/storage/product/${imageName}`
+      ? `https://revista-sa.com/storage/app/public/product/${imageName}`
       : `https://www.revista-sa.com/public/storage/product/${item.product_full_info.thumbnail}`;
 
     return (

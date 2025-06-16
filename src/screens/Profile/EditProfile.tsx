@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -7,30 +7,57 @@ import {
   SafeAreaView,
   Pressable,
   Modal,
+  Alert,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
 import IMAGES from '../../assets/images';
-import {CustomText} from '../../components/CustomText';
+import { CustomText } from '../../components/CustomText';
 import CustomInput from '../../components/CustomInput';
 import COLORS from '../../utils/Colors';
-import {horizontalScale, verticalScale} from '../../utils/Metrics';
+import { horizontalScale, verticalScale } from '../../utils/Metrics';
 import {
   ImagePickerResponse,
   launchCamera,
   launchImageLibrary,
+  Asset,
 } from 'react-native-image-picker';
 import VectorIcon from '../../components/VectorIcon';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Base_Url } from '../../utils/ApiUrl';
+import Toast from 'react-native-toast-message';
+
+// Replace with your actual storage base URL
+const STORAGE_BASE_URL = 'https://revista-sa.com/storage/app/public/profile/';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EditProfile'>;
 
-const EditProfile: React.FC<Props> = ({navigation}) => {
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+const EditProfile: React.FC<Props> = ({ navigation, route }) => {
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [profileImage, setProfileImage] = useState<any>(IMAGES.profile);
+  const [imageAsset, setImageAsset] = useState<Asset | null>(null); // To keep the picked image asset
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (route.params?.userData) {
+      const user = route.params.userData;
+      setName(user.f_name || '');
+      setLastName(user.l_name || '');
+      setPhoneNumber(user.phone || '');
+      setEmail(user.email || '');
+      if (user.image) {
+        setProfileImage({ uri: `${STORAGE_BASE_URL}${user.image}` });
+      }
+    }
+  }, [route.params]);
 
   const handleImagePick = (type: 'camera' | 'gallery') => {
     setModalVisible(false);
@@ -39,142 +66,246 @@ const EditProfile: React.FC<Props> = ({navigation}) => {
       quality: 0.7,
     };
 
+    const callback = (response: ImagePickerResponse) => {
+      if (response.assets && response.assets.length > 0) {
+        setProfileImage({ uri: response.assets[0].uri });
+        setImageAsset(response.assets[0]);
+      }
+    };
+
     if (type === 'camera') {
-      launchCamera(options, (response: ImagePickerResponse) => {
-        if (response.assets && response.assets.length > 0) {
-          setProfileImage({uri: response.assets[0].uri});
-        }
-      });
+      launchCamera(options, callback);
     } else {
-      launchImageLibrary(options, (response: ImagePickerResponse) => {
-        if (response.assets && response.assets.length > 0) {
-          setProfileImage({uri: response.assets[0].uri});
+      launchImageLibrary(options, callback);
+    }
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Use FormData for image upload
+      const formData = new FormData();
+      formData.append('f_name', name);
+      formData.append('l_name', lastName);
+      formData.append('phone', phoneNumber);
+      if (password) formData.append('password', password);
+
+      // Only append image if a new one was picked
+      if (imageAsset && imageAsset.uri) {
+        // Get file name and type
+        const uriParts = imageAsset.fileName
+          ? imageAsset.fileName.split('.')
+          : ['profile', 'jpg'];
+        const fileType = imageAsset.type || `image/${uriParts[uriParts.length - 1]}`;
+        formData.append('image', {
+          uri: imageAsset.uri,
+          name: imageAsset.fileName || `profile.${uriParts[uriParts.length - 1]}`,
+          type: fileType,
+        });
+      }
+
+      const response = await axios.post(
+        Base_Url.updateProfile,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
         }
+      );
+
+      if (response.data && response.data.message) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: response.data.message,
+        });
+        Alert.alert('Success', response.data.message, [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Profile update failed',
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Something went wrong',
       });
+
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        {/* Back Button */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <VectorIcon
-            type="AntDesign"
-            name="left"
-            size={24}
-            color={COLORS.textColor}
-          />
-        </TouchableOpacity>
-
-        {/* Header */}
-        <CustomText
-          type="heading"
-          color={COLORS.textColor}
-          fontWeight="bold"
-          style={styles.headerText}>
-          My Profile
-        </CustomText>
-
-        {/* Profile Image with Edit Icon */}
-        <View style={styles.profileSection}>
-          <Image source={profileImage} style={styles.profileImage} />
+      <ScrollView>
+        <View style={styles.container}>
+          {/* Back Button */}
           <TouchableOpacity
-            style={styles.editIconContainer}
-            onPress={() => setModalVisible(true)}>
-            <Icon name="edit" size={18} color="#fff" />
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <VectorIcon
+              type="AntDesign"
+              name="left"
+              size={24}
+              color={COLORS.textColor}
+            />
           </TouchableOpacity>
-        </View>
 
-        {/* Name Input */}
-        <CustomText
-          style={styles.label}
-          fontWeight="bold"
-          color={COLORS.textColor}>
-          Name
-        </CustomText>
-        <CustomInput
-          value={name}
-          placeholder="Name"
-          onChangeText={setName}
-          style={styles.input}
-        />
-
-        {/* Email Input */}
-        <CustomText
-          style={styles.label}
-          fontWeight="bold"
-          color={COLORS.textColor}>
-          Email
-        </CustomText>
-        <CustomInput
-          value={email}
-          placeholder="Email"
-          keyboardType="email-address"
-          onChangeText={setEmail}
-          style={styles.input}
-        />
-
-        {/* Password Input */}
-        <CustomText
-          style={styles.label}
-          fontWeight="bold"
-          color={COLORS.textColor}>
-          Password
-        </CustomText>
-        <CustomInput
-          value={password}
-          placeholder="Password"
-          type="password"
-          onChangeText={setPassword}
-          style={styles.input}
-        />
-
-        {/* Save Changes Button */}
-        <TouchableOpacity style={styles.saveButton}>
+          {/* Header */}
           <CustomText
-            color="#fff"
+            type="heading"
+            color={COLORS.textColor}
             fontWeight="bold"
-            style={styles.saveButtonText}>
-            Save Changes
+            style={styles.headerText}>
+            My Profile
           </CustomText>
-        </TouchableOpacity>
-        <Modal
-          visible={modalVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={() => setModalVisible(false)}>
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={() => setModalVisible(false)}>
-            <View style={styles.modalContent}>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleImagePick('camera')}>
-                <CustomText color={COLORS.textColor} fontWeight="bold">
-                  Camera
-                </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleImagePick('gallery')}>
-                <CustomText color={COLORS.textColor} fontWeight="bold">
-                  Gallery
-                </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalOption, {borderBottomWidth: 0}]}
-                onPress={() => setModalVisible(false)}>
-                <CustomText color="red" fontWeight="bold">
-                  Cancel
-                </CustomText>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Modal>
-      </View>
+
+          {/* Profile Image with Edit Icon */}
+          <View style={styles.profileSection}>
+            <Image source={profileImage} style={styles.profileImage} />
+            <TouchableOpacity
+              style={styles.editIconContainer}
+              onPress={() => setModalVisible(true)}>
+              <Icon name="edit" size={18} color="#fff" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Name Input */}
+          <CustomText
+            style={styles.label}
+            fontWeight="bold"
+            color={COLORS.textColor}>
+            Name
+          </CustomText>
+          <CustomInput
+            value={name}
+            placeholder="Name"
+            onChangeText={setName}
+            style={styles.input}
+          />
+          <CustomText
+            style={styles.label}
+            fontWeight="bold"
+            color={COLORS.textColor}>
+            Last Name
+          </CustomText>
+          <CustomInput
+            value={lastName}
+            placeholder="Last Name"
+            onChangeText={setLastName}
+            style={styles.input}
+          />
+          <CustomText
+            style={styles.label}
+            fontWeight="bold"
+            color={COLORS.textColor}>
+            Phone Number
+          </CustomText>
+          <CustomInput
+            value={phoneNumber}
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            onChangeText={setPhoneNumber}
+            style={styles.input}
+          />
+          {/* Email Input */}
+          {/* <CustomText
+            style={styles.label}
+            fontWeight="bold"
+            color={COLORS.textColor}>
+            Email
+          </CustomText>
+          <CustomInput
+            value={email}
+            placeholder="Email"
+            keyboardType="email-address"
+            onChangeText={setEmail}
+            style={styles.input}
+            editable={false} // Email usually not editable
+          /> */}
+
+          {/* Password Input */}
+          <CustomText
+            style={styles.label}
+            fontWeight="bold"
+            color={COLORS.textColor}>
+            Password
+          </CustomText>
+          <CustomInput
+            value={password}
+            placeholder="Password"
+            type='password'
+            onChangeText={setPassword}
+            style={styles.input}
+          />
+
+          {/* Save Changes Button */}
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSave}
+            disabled={loading}
+          >
+            <CustomText
+              color="#fff"
+              fontWeight="bold"
+              style={styles.saveButtonText}>
+              {loading ? 'Saving...' : 'Save Changes'}
+            </CustomText>
+          </TouchableOpacity>
+          <Modal
+            visible={modalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}>
+            <Pressable
+              style={styles.modalOverlay}
+              onPress={() => setModalVisible(false)}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick('camera')}>
+                  <CustomText color={COLORS.textColor} fontWeight="bold">
+                    Camera
+                  </CustomText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick('gallery')}>
+                  <CustomText color={COLORS.textColor} fontWeight="bold">
+                    Gallery
+                  </CustomText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalOption, { borderBottomWidth: 0 }]}
+                  onPress={() => setModalVisible(false)}>
+                  <CustomText color="red" fontWeight="bold">
+                    Cancel
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -195,7 +326,6 @@ const styles = StyleSheet.create({
   headerText: {
     textAlign: 'center',
     marginTop: verticalScale(20),
-    // marginHorizontal:horizontalScale(30),
     marginBottom: verticalScale(10),
     fontSize: 24,
   },

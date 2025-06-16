@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Category {
   product_count: string;
@@ -36,7 +37,7 @@ const CATEGORY_IMAGE_MAP: Record<string, any> = {
   "children's perfumes": IMAGES.perfume8,
 };
 
-const ICON_BASE_URL = 'https://www.revista-sa.com/public/storage/category/';
+const ICON_BASE_URL = 'https://revista-sa.com/storage/app/public/category/';
 const DEFAULT_ICON_URL = ICON_BASE_URL + 'def.png';
 
 const CategorySection: React.FC = () => {
@@ -65,14 +66,14 @@ const CategorySection: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     fetchCategories();
-  }, []);
+   }, [])
+)
 
   const renderCategory = ({item}: {item: Category}) => {
     const isValidApiIcon = item.icon && item.icon !== 'def.png';
-
-    // Get the static image from the map
     const staticImage =
       CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
 
@@ -107,7 +108,7 @@ const CategorySection: React.FC = () => {
 
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        {/* Header */}
+
         <View style={styles.header}>
           <Text style={styles.title}>Popular Categories</Text>
           <TouchableOpacity style={styles.seeAllButton}>

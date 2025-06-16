@@ -75,6 +75,9 @@ const IMAGES = {
   home1: require('../subcategory/home1.jpg'),
   home2: require('../subcategory/home2.jpg'),
   home3: require('../subcategory/home3.jpg'),
+  sport:require('../subcategory/sport.jpg'),
+  defaultbanner:require('../subcategory/defaultBaner.jpg'),
+  myfatoorah:require('../subcategory/fatoorah.png'),
 };
 
 export default IMAGES;

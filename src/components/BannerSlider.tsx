@@ -1,8 +1,9 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dimensions, Image, StyleSheet, View} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import {Base_Url} from '../utils/ApiUrl';
+import { useFocusEffect } from '@react-navigation/native';
 
 const {width} = Dimensions.get('window');
 
@@ -39,9 +40,11 @@ const BannerSlider: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+useFocusEffect(
+  useCallback(() => {
     BannerApi();
-  }, []);
+  }, [])
+);
   const imagesToDisplay =
     bannerImages.length > 0 ? bannerImages : defaultImages;
 

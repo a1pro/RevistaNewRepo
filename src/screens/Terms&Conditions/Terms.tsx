@@ -13,7 +13,6 @@ const Terms: React.FC<Props> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Header with back button */}
         <View style={styles.headerContainer}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}

@@ -7,7 +7,14 @@ export type Product = {
   image: any;
   price: number;
 };
-
+export type UserChat = {
+  id: string;
+  name: string;
+  avatar: string;
+  lastMessage?: string;
+  lastTime?: string;
+  type?: 'vendor' | 'deliveryman';
+};
 export type RootStackParamList = {
   Splash: undefined;
   Welcome: undefined;
@@ -34,4 +41,12 @@ export type RootStackParamList = {
   Language: undefined;
   SaveAddress: undefined;
   Terms: undefined;
+  FlashSale: undefined;
+  MagazineProduct: { categoryId: number };
+  AllSellerScreen: undefined;
+  SellerDetails: { seller: Seller };
+  Inbox: undefined;
+  ChatScreen: { user: UserChat };
+  CheckoutScreen: { cartItems: CartItem[]; total: number };
+  // MagzineProductDetails: { product: MagazineProduct };
 };

@@ -16,6 +16,14 @@ export const Base_Url = {
   addWishlist:`${base_url}/api/v4/customer/wish-list/add`,
   wishlistremove:`${base_url}/api/v4/customer/wish-list/remove`,
   getWishlist:`${base_url}/api/v4/customer/wish-list`,
-  clearWishlist:`${base_url}/api/v4/customer/wish-list/clear-all`
-  
+  clearWishlist:`${base_url}/api/v4/customer/wish-list/clear-all`,
+  getProfile:`${base_url}/api/v4/customer/info`,
+  updateProfile:`${base_url}/api/v4/customer/update-profile`,
+  flashsale:`${base_url}/api/v4/flash-deals`,
+  search:`${base_url}/api/v4/products/search`,
+  logout:`${base_url}/api/v4/auth/logout`,
+  magzinecategory:`${base_url}/api/v4/magazine/categories`,
+  magzineproduct:`${base_url}/api/v4/magazine/products`,
+  topseller:`${base_url}/api/v4/seller/top`,
+  allseller:`${base_url}/api/v4/seller/all`,
 };

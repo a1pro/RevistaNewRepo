@@ -9,6 +9,7 @@ import {request, PERMISSIONS} from 'react-native-permissions';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 import {AuthProvider} from './src/context/AuthContext';
+import Toast from 'react-native-toast-message';
 LogBox.ignoreAllLogs();
 const requestAppPermissions = async () => {
   try {
@@ -25,10 +26,11 @@ const requestAppPermissions = async () => {
       // await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
     }
   } catch (error) {
-    Alert.alert(
-      'Permission Error',
-      'There was a problem requesting permissions.',
-    );
+Toast.show({type: 'error',
+   text1: 'Error',
+    text2: 'There was a problem requesting permissions.'});    
+
+    console.log('Error requesting permissions:', error);
   }
 };
 
@@ -42,6 +44,7 @@ export default function App() {
       <AuthProvider>
         <GestureHandlerRootView style={{flex: 1}}>
           <AppNavigator />
+          <Toast/>
         </GestureHandlerRootView>
       </AuthProvider>
     </Provider>

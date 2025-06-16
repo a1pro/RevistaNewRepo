@@ -17,6 +17,7 @@ import {Formik} from 'formik';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import {useAuth} from '../../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -37,15 +38,21 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
 
       if (res?.data?.token) {
         await login(res.data.token);
-        Alert.alert('Login Successful!');
+        console.log('Login response:', res.data);
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Login Successful!',
+        });
         navigation.replace('Dashboard');
       }
     } catch (error: any) {
       console.log('Login error:', error);
-      Alert.alert(
-        'Login Failed',
-        error?.response?.data?.message || 'Something went wrong',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Something went wrong',
+      });
     }
   };
 

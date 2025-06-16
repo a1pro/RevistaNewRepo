@@ -5,62 +5,68 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
-import {CustomText} from '../../components/CustomText';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
+import { CustomText } from '../../components/CustomText';
 import COLORS from '../../utils/Colors';
 import IMAGES from '../../assets/images';
 import styles from './style';
 import VectorIcon from '../../components/VectorIcon';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Order'>;
 
-const ORDERS = [
-  {
-    id: '1',
-    image: IMAGES.cream1,
-    orderNumber: '#92287157',
-    deliveryType: 'Standard Delivery',
-    status: 'Delivered',
-    itemsCount: 2,
-  },
-  {
-    id: '2',
-    image: IMAGES.cream,
-    orderNumber: '#92783',
-    deliveryType: 'Standard Delivery',
-    status: 'Delivered',
-    itemsCount: 1,
-  },
-  {
-    id: '3',
-    image: IMAGES.cream2,
-    orderNumber: '#378246',
-    deliveryType: 'Standard Delivery',
-    status: 'Delivered',
-    itemsCount: 5,
-  },
-];
+// Helper function to get a default product image based on order index
+const getDefaultImage = (index: number) => {
+  const images = [IMAGES.cream1, IMAGES.cream, IMAGES.cream2];
+  return images[index % images.length];
+};
 
-const Order: React.FC<Props> = ({navigation}) => {
-  const renderOrder = ({item}: {item: (typeof ORDERS)[0]}) => (
+const Order: React.FC<Props> = ({ navigation }) => {
+  // Get orders from Redux
+  const orders = useSelector((state: RootState) => state.orders.orders);
+  console.log('Orders:', orders);
+
+const BASE_IMAGE_URL = 'https://www.revista-sa.com/storage/app/public/product/thumbnail/';
+
+const renderOrder = ({ item, index }: { item: any; index: number }) => {
+  const firstProduct = item.items[0];
+  const firstImage = firstProduct.thumbnail;
+
+  // let imageSource;
+  // if (firstImage) {
+  //   imageSource = firstImage.startsWith('http')
+  //     ?
+  //      { uri: `${BASE_IMAGE_URL}${firstImage}` }
+  //     : { uri: firstImage }
+  // } else {
+  //   imageSource = getDefaultImage(index);
+  // }
+
+  return (
     <View style={styles.orderCard}>
-      <Image source={item.image} style={styles.productImage} />
-      <View style={{flex: 1, marginLeft: 8}}>
+      <Image
+        source={firstImage ? { uri: `${BASE_IMAGE_URL}${firstImage}` } : getDefaultImage(index)}
+        style={styles.productImage}
+      />
+      <View style={{ flex: 1, marginLeft: 8 }}>
         <CustomText style={styles.orderNumber}>
-          Order {item.orderNumber}
+          Order #{item.timestamp.slice(0, 8).replace(/-/g, '')}
         </CustomText>
-        <CustomText style={styles.deliveryType}>{item.deliveryType}</CustomText>
+        <CustomText style={styles.deliveryType}>Standard Delivery</CustomText>
+        <CustomText style={{ fontSize: 14, color: '#555' }}>
+          {firstProduct.name}
+        </CustomText>
         <View style={styles.statusRow}>
           <CustomText style={styles.statusDelivered}>Delivered</CustomText>
           <Icon
             name="check-circle"
             size={18}
             color="#2676FD"
-            style={{marginLeft: 4}}
+            style={{ marginLeft: 4 }}
           />
         </View>
       </View>
@@ -69,9 +75,10 @@ const Order: React.FC<Props> = ({navigation}) => {
           alignItems: 'flex-end',
           justifyContent: 'space-between',
           height: 80,
-        }}>
+        }}
+      >
         <CustomText style={styles.itemsCount}>
-          {item.itemsCount} items
+          {item.items.length} items
         </CustomText>
         <TouchableOpacity style={styles.reviewBtn}>
           <CustomText style={styles.reviewBtnText}>Review</CustomText>
@@ -79,6 +86,8 @@ const Order: React.FC<Props> = ({navigation}) => {
       </View>
     </View>
   );
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -87,7 +96,8 @@ const Order: React.FC<Props> = ({navigation}) => {
         <View style={styles.headerRow}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+          >
             <VectorIcon
               type="AntDesign"
               name="left"
@@ -99,15 +109,16 @@ const Order: React.FC<Props> = ({navigation}) => {
             type="heading"
             color={COLORS.textColor}
             fontWeight="bold"
-            style={styles.headerText}>
+            style={styles.headerText}
+          >
             My Orders
           </CustomText>
         </View>
         <FlatList
-          data={ORDERS}
-          keyExtractor={item => item.id}
+          data={orders}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={renderOrder}
-          contentContainerStyle={{paddingBottom: 20}}
+          contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
         />
       </View>

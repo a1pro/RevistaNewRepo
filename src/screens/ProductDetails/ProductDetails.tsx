@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,24 +15,26 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
 import IMAGES from '../../assets/images';
 import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
-import {addCartItem} from '../../redux/slice/cartSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import {addFavourite, removeFavourite} from '../../redux/slice/favouriteSlice';
-import {AppDispatch, RootState} from '../../redux/store';
-import {Base_Url} from '../../utils/ApiUrl';
+import { addCartItem } from '../../redux/slice/cartSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavourite, removeFavourite } from '../../redux/slice/favouriteSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { Base_Url } from '../../utils/ApiUrl';
 import styles from './style';
+import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProductDetails'>;
 
-const ProductDetails: React.FC<Props> = ({route, navigation}) => {
-  const {product} = route.params as any;
+const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
+  const { product } = route.params as any;
   console.log('product api ', product);
   const dispatch = useDispatch<AppDispatch>();
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -60,7 +62,7 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
     product.images.length &&
     product.images[0].startsWith('http')
   ) {
-    imageSource = {uri: product.images[0]};
+    imageSource = { uri: product.images[0] };
   } else {
     imageSource = IMAGES.perfume1;
   }
@@ -80,7 +82,11 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
         setSimilarLoading(true);
         const token = await AsyncStorage.getItem('token');
         if (!token) {
-          Alert.alert('Error', 'No token found');
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'No token found',
+          });
           setSimilarLoading(false);
           return;
         }
@@ -111,7 +117,11 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       setWishlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setWishlistLoading(false);
         return;
       }
@@ -125,18 +135,26 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       });
       if (res.data && res.data.message === 'Successfully added!') {
         dispatch(addFavourite(product));
-        Alert.alert(
-          'Success',
-          res.data.message || 'Product added to wishlist!',
-        );
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: res.data.message || 'Product added to wishlist!',
+        });
+       
       } else {
-        Alert.alert('Error', res.data.message || 'Failed to add to wishlist.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Failed to add to wishlist.',
+        });
       }
     } catch (error) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message || 'Error adding to wishlist.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: (error as any)?.response?.data?.message || 'Error adding to wishlist.',
+      });
+      
     } finally {
       setWishlistLoading(false);
     }
@@ -147,7 +165,11 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       setWishlistLoading(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setWishlistLoading(false);
         return;
       }
@@ -164,20 +186,27 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
         (res.data === 'successfully removed!' ||
           res.data.message === 'successfully removed!')
       ) {
-        dispatch(removeFavourite({id: product.id}));
-        Alert.alert('Removed', 'Product removed from wishlist.');
+        dispatch(removeFavourite({ id: product.id }));
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Product removed from wishlist!',
+        });
       } else {
-        Alert.alert(
-          'Error',
-          res.data?.message || 'Failed to remove product from wishlist.',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Failed to remove product from wishlist.',
+        });
       }
     } catch (error) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message ||
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: (error as any)?.response?.data?.message ||
           'Failed to remove product from wishlist.',
-      );
+      });
+    
     } finally {
       setWishlistLoading(false);
     }
@@ -187,7 +216,11 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       setCartLoading(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setCartLoading(false);
         return;
       }
@@ -201,16 +234,26 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
         },
       });
       if (res.data && res.data.message === 'Successfully added!') {
-        dispatch(addCartItem({...product, quantity}));
-        Alert.alert('Success', res.data.message || 'Product added to cart!');
+        dispatch(addCartItem({ ...product, quantity }));
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: res.data.message || 'Product added to cart!',
+        });
       } else {
-        Alert.alert('Error', res.data.message || 'Failed to add to cart.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Failed to add to cart.',
+        });
       }
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message || 'Error adding to cart.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Error adding to cart.',
+      });
+      
     } finally {
       setCartLoading(false);
     }
@@ -223,8 +266,6 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       await handleAddToWishlist();
     }
   };
-
-  // Review Modal Handlers
   const openReviewModal = () => {
     setReviewRating(0);
     setReviewComment('');
@@ -238,14 +279,22 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
 
   const submitReview = async () => {
     if (reviewRating === 0 || !reviewComment.trim()) {
-      Alert.alert('Validation', 'Please provide a rating and comment.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation',
+        text2: 'Please provide a rating and comment.',
+      });
       return;
     }
     setSubmittingReview(true);
     try {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        Alert.alert('Error', 'No token found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No token found',
+        });
         setSubmittingReview(false);
         return;
       }
@@ -265,22 +314,37 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
         },
       );
       if (res.data && res.data.message === 'successfully review submitted!') {
-        Alert.alert('Thank you!', 'Your review has been submitted.');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Review submitted!',
+        });
         closeReviewModal();
+        await fetchReviews();
       } else {
-        Alert.alert('Error', res.data.message || 'Failed to submit review.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: res.data.message || 'Failed to submit review.',
+        });
       }
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message || 'Error submitting review.',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Error submitting review.',
+      });
+     
     } finally {
       setSubmittingReview(false);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      fetchReviews();
+    }, [])
+  );
 
-  // Reviews List Modal Handlers
   const fetchReviews = async () => {
     setReviewsLoading(true);
     try {
@@ -290,7 +354,12 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
       console.log('get review api data', res.data);
       setReviews(res.data || []);
     } catch (error) {
-      Alert.alert('Error', 'Failed to load reviews');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to load reviews',
+      });
+     
     } finally {
       setReviewsLoading(false);
     }
@@ -304,7 +373,6 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with back button */}
       <View style={localStyles.headerContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -334,23 +402,23 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
               type="FontAwesome"
               name="star"
               color="#FFD700"
-              style={{marginRight: 4}}
+              style={{ marginRight: 4 }}
             />
             <Text style={styles.ratingText}>
               {reviews.length > 0
                 ? (
-                    reviews.reduce((acc, review) => acc + review.rating, 0) /
-                    reviews.length
-                  ).toFixed(1)
+                  reviews.reduce((acc, review) => acc + (review as { rating: number }).rating, 0) /
+                  reviews.length
+                ).toFixed(1)
                 : rating > 0
-                ? rating.toFixed(1)
-                : 'No rating'}
+                  ? rating.toFixed(1)
+                  : 'No rating'}
             </Text>
             <TouchableOpacity onPress={openReviewsModal}>
               <Text
                 style={[
                   styles.reviewText,
-                  {textDecorationLine: 'underline', color: '#1663F7'},
+                  { textDecorationLine: 'underline', color: '#1663F7' },
                 ]}>
                 ({reviews.length || reviewsCount}{' '}
                 {reviews.length === 1 || reviewsCount === 1
@@ -398,40 +466,40 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
           <ActivityIndicator
             size="small"
             color="#1663F7"
-            style={{marginVertical: 16}}
+            style={{ marginVertical: 16 }}
           />
         ) : similarProducts.length === 0 ? (
-          <Text style={{color: '#888', marginVertical: 8, marginLeft: 30}}>
+          <Text style={{ color: '#888', marginVertical: 8, marginLeft: 30 }}>
             No similar product.
           </Text>
         ) : (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{marginVertical: 8}}>
+            style={{ marginVertical: 8 }}>
             {similarProducts.map((item, idx) => (
               <TouchableOpacity
-                key={item.id || idx}
+                key={(item as { id: number }).id || idx}
                 style={styles.similarCard}
                 onPress={() =>
-                  navigation.push('ProductDetails', {product: item})
+                  navigation.push('ProductDetails', { product: item })
                 }>
                 <Image
                   source={
-                    item.images &&
-                    item.images.length &&
-                    item.images[0].startsWith('http')
-                      ? {uri: item.images[0]}
+                    (item as { images: string[] }).images && Array.isArray((item as { images: string[] }).images) &&
+                      (item as { images: string[] }).images.length &&
+                      (item as { images: string[] }).images[0] && (item as { images: string[] }).images[0].startsWith('http')
+                      ? { uri: (item as { images: string[] }).images[0] }
                       : IMAGES.revista // fallback image
                   }
                   style={styles.similarImage}
                   resizeMode="cover"
                 />
                 <Text style={styles.similarName} numberOfLines={1}>
-                  {item.name}
+                  {(item as { name: string }).name}
                 </Text>
                 <Text style={styles.similarPrice}>
-                  {item.unit_price?.toFixed(2)}{' '}
+                  {(item as { unit_price: number }).unit_price?.toFixed(2)}{' '}
                   <Text style={styles.currency}>﷼</Text>
                 </Text>
               </TouchableOpacity>
@@ -466,11 +534,11 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
             <Text style={styles.cartBtnText}>Add to Cart</Text>
           )}
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.buyBtn}
           onPress={() => navigation.navigate('Address')}>
           <Text style={styles.buyBtnText}>Buy now</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.bottomBarUnderline} />
 
@@ -500,7 +568,7 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
                   type="FontAwesome"
                   name={reviewRating >= star ? 'star' : 'star-o'}
                   color="#FFD700"
-                  style={{marginHorizontal: 2}}
+                  style={{ marginHorizontal: 2 }}
                 />
               </TouchableOpacity>
             ))}
@@ -539,7 +607,7 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
           onPress={closeReviewsModal}
         />
         <View style={localStyles.halfModalContainer}>
-          <View style={{alignItems: 'center', marginBottom: 10}}>
+          <View style={{ alignItems: 'center', marginBottom: 10 }}>
             <View
               style={{
                 width: 40,
@@ -551,20 +619,20 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
             />
             <Text style={localStyles.modalTitle}>Product Reviews</Text>
           </View>
-          <ScrollView style={{flex: 1}}>
+          <ScrollView style={{ flex: 1 }}>
             {reviewsLoading ? (
               <ActivityIndicator
                 size="large"
                 color="#1663F7"
-                style={{marginTop: 40}}
+                style={{ marginTop: 40 }}
               />
             ) : reviews.length === 0 ? (
-              <Text style={{textAlign: 'center', marginTop: 30, color: '#888'}}>
+              <Text style={{ textAlign: 'center', marginTop: 30, color: '#888' }}>
                 No reviews yet.
               </Text>
             ) : (
               reviews.map((review, idx) => (
-                <View key={review?.id || idx} style={localStyles.reviewCard}>
+                <View key={(review as any)?.id || idx} style={localStyles.reviewCard}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -573,20 +641,20 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
                     }}>
                     <Image
                       source={
-                        review?.customer?.image &&
-                        review?.customer.image !== 'def.png'
-                          ? {uri: review?.customer.image}
+                        (review as any)?.customer?.image &&
+                          (review as any)?.customer.image !== 'def.png'
+                          ? { uri: (review as any)?.customer.image }
                           : IMAGES.profile
                       }
                       style={localStyles.reviewAvatar}
                     />
-                    <View style={{marginLeft: 12}}>
+                    <View style={{ marginLeft: 12 }}>
                       <Text style={localStyles.reviewName}>
-                        {review?.customer?.f_name || ''}{' '}
-                        {review?.customer?.l_name || ''}
+                        {(review as any)?.customer?.f_name || ''}{' '}
+                        {(review as any)?.customer?.l_name || ''}
                       </Text>
                       <Text style={localStyles.reviewEmail}>
-                        {review?.customer?.email || ''}
+                        {(review as any)?.customer?.email || ''}
                       </Text>
                     </View>
                   </View>
@@ -601,14 +669,14 @@ const ProductDetails: React.FC<Props> = ({route, navigation}) => {
                         key={star}
                         size={18}
                         type="FontAwesome"
-                        name={review?.rating >= star ? 'star' : 'star-o'}
+                        name={(review as any).rating >= star ? 'star' : 'star-o'}
                         color="#FFD700"
-                        style={{marginRight: 2}}
+                        style={{ marginRight: 2 }}
                       />
                     ))}
                   </View>
                   <Text style={localStyles.reviewComment}>
-                    {review?.comment}
+                    {(review as any).comment}
                   </Text>
                 </View>
               ))
@@ -637,7 +705,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
@@ -665,7 +733,7 @@ const localStyles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 10,

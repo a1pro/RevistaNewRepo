@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
   },
   profileSection: {
     flexDirection: 'row',
+    
     alignItems: 'center',
     marginBottom: verticalScale(20),
   },
@@ -36,10 +37,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 18,
     paddingVertical: 8,
+    marginLeft:horizontalScale(30)
   },
   editProfileText: {
     fontSize: 14,
   },
+  userNameText: {
+  // marginTop: 10,
+  textAlign: 'center',
+  fontSize: 18,
+  fontWeight: 'bold',
+},
   sectionTitle: {
     fontSize:responsiveFontSize(20),
     marginBottom: 8,

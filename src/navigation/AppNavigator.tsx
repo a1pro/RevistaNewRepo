@@ -22,6 +22,13 @@ import Language from '../screens/Language/Language';
 import SaveAddress from '../screens/SaveAddress/SaveAddress';
 import Terms from '../screens/Terms&Conditions/Terms';
 import SubCategories from '../screens/AllCategories/SubCategories';
+import MagzineProduct from '../screens/Book/MagzineProduct';
+import AllSellerScreen from '../screens/Seller/AllSellerScreen';
+import SellerDetails from '../screens/Seller/SellerDetails';
+import Inbox from '../screens/Chat/Inbox';
+import Chat from '../screens/Chat/ChatScreen';
+import ChatScreen from '../screens/Chat/ChatScreen';
+import CheckoutScreen from '../screens/Checkout/CheckoutScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -120,7 +127,38 @@ const AppNavigator = () => (
           component={Terms}
           options={{headerShown: false}}
         />
+        <Stack.Screen 
+          name="MagazineProduct"
+          component={MagzineProduct}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AllSellerScreen"
+          component={AllSellerScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SellerDetails"
+          component={SellerDetails}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Inbox"
+          component={Inbox}
+          options={{headerShown: false}}
+        />
+          <Stack.Screen 
+       name="ChatScreen" 
+       component={ChatScreen}
+        options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CheckoutScreen"
+          component={CheckoutScreen}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
+     
     </SafeAreaProvider>
   </NavigationContainer>
 );

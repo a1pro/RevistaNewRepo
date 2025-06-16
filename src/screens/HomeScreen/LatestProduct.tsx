@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.4;
@@ -25,6 +25,7 @@ interface Product {
   name: string;
   images: string[];
   unit_price: number;
+  // Add any other fields you need
 }
 
 const PRODUCT_IMAGE_MAP: Record<string, any> = {
@@ -32,9 +33,15 @@ const PRODUCT_IMAGE_MAP: Record<string, any> = {
   // Add more static fallbacks for product names if needed
 };
 
-const LatestProduct: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const navigation=useNavigation()
+interface LatestProductProps {
+  searchQuery?: string;
+}
+
+const LatestProduct: React.FC<LatestProductProps> = ({ searchQuery = '' }) => {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const navigation = useNavigation();
+
   const fetchProducts = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -51,19 +58,36 @@ const LatestProduct: React.FC = () => {
       });
 
       if (res.data && res.data.products) {
-        setProducts(res.data.products);
+        setAllProducts(res.data.products);
+        filterProducts(res.data.products, searchQuery);
       }
     } catch (error) {
       console.log('Error fetching products:', error);
     }
   };
 
+  const filterProducts = (products: Product[], query: string) => {
+    if (!query) {
+      setFilteredProducts(products);
+      return;
+    }
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  };
+
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    filterProducts(allProducts, searchQuery);
+  }, [searchQuery, allProducts]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [])
+  );
 
   const renderProduct = ({ item }: { item: Product }) => {
-    // Use first image, or fallback to static image
     let imageSource;
     if (item.images && item.images.length && item.images[0].startsWith('http')) {
       imageSource = { uri: item.images[0] };
@@ -75,29 +99,23 @@ const LatestProduct: React.FC = () => {
 
     return (
       <TouchableOpacity onPress={() => navigation.navigate("ProductDetails", { product: item })}>
-      <View style={styles.card}>
-        {/* <Image
-          source={IMAGES.revista}
-          style={styles.bgSwirl}
-          resizeMode="cover"
-        /> */}
-        <Image
-          source={imageSource}
-          style={styles.productImage}
-          resizeMode="contain"
-        />
-        <Text style={styles.productTitle} numberOfLines={1}>{item.name}</Text>
-        <Text style={styles.productPrice}>
-          {item.unit_price?.toFixed(2)} <Text style={styles.currency}>﷼</Text>
-        </Text>
-      </View>
+        <View style={styles.card}>
+          <Image
+            source={imageSource}
+            style={styles.productImage}
+            resizeMode="contain"
+          />
+          <Text style={styles.productTitle} numberOfLines={1}>{item.name}</Text>
+          <Text style={styles.productPrice}>
+            {item.unit_price?.toFixed(2)} <Text style={styles.currency}>﷼</Text>
+          </Text>
+        </View>
       </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>Latest Products</Text>
         <TouchableOpacity style={styles.viewAllBtn}>
@@ -112,7 +130,7 @@ const LatestProduct: React.FC = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={products}
+        data={filteredProducts}
         keyExtractor={item => item.id.toString()}
         renderItem={renderProduct}
         horizontal

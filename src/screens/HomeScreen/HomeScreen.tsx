@@ -1,22 +1,45 @@
-import React, { useState } from 'react';
-import {View, SafeAreaView, Image, ScrollView, TextInput} from 'react-native';
-import {RootStackParamList} from '../../types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, { useState, useCallback } from 'react';
+import { View, SafeAreaView, Image, ScrollView, TextInput, ActivityIndicator } from 'react-native';
+import { RootStackParamList } from '../../types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import BannerSlider from '../../components/BannerSlider';
 import styles from './style';
 import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
-import {horizontalScale, verticalScale} from '../../utils/Metrics';
+import { horizontalScale, verticalScale } from '../../utils/Metrics';
 import IMAGES from '../../assets/images';
 import HandmadeProducts from '../HomemadeProducts/HandmadeProducts';
 import CategorySection from '../CategorySection/CategorySection';
 import LatestProduct from './LatestProduct';
+import FlashSale from '../FlashSale/FlashSale';
+import TopSeller from './TopSeller';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const refreshHomeData = useCallback(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  useFocusEffect(useCallback(() => {
+    refreshHomeData();
+  }, [refreshHomeData]));
+
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.appColor} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,12 +64,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 type="Feather"
                 name="search"
                 color={COLORS.black}
-                onPress={() => setShowSearch(prev => !prev)}
+                onPress={() => {
+                  setShowSearch(prev => !prev);
+                  if (!showSearch) setSearchQuery('');
+                }}
               />
             </View>
           </View>
 
-          {/* Search Bar */}
           {showSearch && (
             <View style={styles.searchBarContainer}>
               <VectorIcon
@@ -67,16 +92,24 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           )}
 
-          {/* Banner slider component */}
-          <BannerSlider />
-          {/* Handmade Products component */}
-          <HandmadeProducts />
-          {/* Category component */}
-          <CategorySection />
-          <LatestProduct />
+          {/* Show only LatestProduct when searching (searchQuery not empty) */}
+          {searchQuery ? (
+            <LatestProduct searchQuery={searchQuery} />
+          ) : (
+            // Show full home screen when search field is empty
+            <>
+              <BannerSlider />
+              <HandmadeProducts />
+              <FlashSale />
+              {/* <CategorySection /> */}
+              <TopSeller />
+              <LatestProduct searchQuery={searchQuery} />
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-export default HomeScreen
+
+export default HomeScreen;

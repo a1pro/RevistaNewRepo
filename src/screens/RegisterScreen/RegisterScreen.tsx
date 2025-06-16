@@ -22,6 +22,7 @@ import {Formik} from 'formik';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import {signupValidationSchema} from '../../utils/singupValidation';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -47,15 +48,21 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
       });
 
       if (res?.data) {
-        Alert.alert('Signup Successful!');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Signup Successful!',
+        });
         navigation.navigate('Login');
       }
     } catch (error: any) {
       console.log('Login error:', error);
-      Alert.alert(
-        'Signup Failed',
-        error?.response?.data?.message || 'Something went wrong',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.response?.data?.message || 'Something went wrong',
+      });
+     
     }
   };
 
