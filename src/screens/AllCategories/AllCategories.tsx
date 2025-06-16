@@ -71,7 +71,6 @@ const AllCategories: React.FC<Props> = ({navigation}) => {
       <Image
         source={{uri: item.image}}
         style={styles.image}
-
         defaultSource={IMAGES.beauty} // Local fallback for iOS
         onError={e => {
           // fallback for Android
@@ -89,9 +88,11 @@ const AllCategories: React.FC<Props> = ({navigation}) => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000" />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      </SafeAreaView>
     );
   }
 

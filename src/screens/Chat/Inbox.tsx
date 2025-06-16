@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,11 @@ import {
   FlatList,
   TextInput,
   Image,
+  SafeAreaView,
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList, UserChat } from '../../types';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList, UserChat} from '../../types';
 import IMAGES from '../../assets/images';
 import VectorIcon from '../../components/VectorIcon';
 import COLORS from '../../utils/Colors';
@@ -21,7 +22,7 @@ const mockChats: UserChat[] = [
   {
     id: '1',
     name: 'Hamad',
-    avatar: IMAGES.profile,      // local require
+    avatar: IMAGES.profile, // local require
     lastMessage: 'fdff',
     lastTime: '32 minutes ago',
     type: 'vendor',
@@ -61,78 +62,90 @@ const Inbox: React.FC = () => {
     chat =>
       chat.type === tab &&
       (chat.name.toLowerCase().includes(search.toLowerCase()) ||
-       chat.lastMessage?.toLowerCase().includes(search.toLowerCase()))
+        chat.lastMessage?.toLowerCase().includes(search.toLowerCase())),
   );
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <VectorIcon type="Ionicons" name="arrow-back" size={24} color={COLORS.black} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Inbox</Text>
-        <View style={{ width: 32 }} />
-      </View>
-
-      {/* Tabs */}
-      <View style={styles.tabRow}>
-        {(['vendor', 'deliveryman'] as const).map(t => (
+    <SafeAreaView style={{flex: 1}}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity
-            key={t}
-            style={[styles.tabButton, tab === t && styles.tabActive]}
-            onPress={() => setTab(t)}
-          >
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
-            </Text>
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}>
+            <VectorIcon
+              type="Ionicons"
+              name="arrow-back"
+              size={24}
+              color={COLORS.black}
+            />
           </TouchableOpacity>
-        ))}
-      </View>
+          <Text style={styles.headerTitle}>Inbox</Text>
+          <View style={{width: 32}} />
+        </View>
 
-      {/* Search */}
-      <View style={styles.searchRow}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          value={search}
-          onChangeText={setSearch}
+        {/* Tabs */}
+        <View style={styles.tabRow}>
+          {(['vendor', 'deliveryman'] as const).map(t => (
+            <TouchableOpacity
+              key={t}
+              style={[styles.tabButton, tab === t && styles.tabActive]}
+              onPress={() => setTab(t)}>
+              <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Search */}
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={search}
+            onChangeText={setSearch}
+          />
+        </View>
+
+        {/* Chat List */}
+        <FlatList
+          data={filteredChats}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.chatItem}
+              onPress={() => navigation.navigate('ChatScreen', {user: item})}>
+              <Image source={item.avatar} style={styles.avatar} />
+              <View style={{flex: 1, marginLeft: 12}}>
+                <Text style={styles.chatName}>{item.name}</Text>
+                <Text style={styles.chatMsg}>{item.lastMessage}</Text>
+              </View>
+              <Text style={styles.chatTime}>{item.lastTime}</Text>
+            </TouchableOpacity>
+          )}
         />
       </View>
-
-      {/* Chat List */}
-      <FlatList
-        data={filteredChats}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.chatItem}
-            onPress={() => navigation.navigate('ChatScreen', { user: item })}
-          >
-            <Image source={item.avatar} style={styles.avatar} />
-            <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={styles.chatName}>{item.name}</Text>
-              <Text style={styles.chatMsg}>{item.lastMessage}</Text>
-            </View>
-            <Text style={styles.chatTime}>{item.lastTime}</Text>
-          </TouchableOpacity>
-        )}
-      />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8faff' },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: '#fff' },
-  backBtn: { padding: 6 },
-  headerTitle: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' },
-  tabRow: { flexDirection: 'row', justifyContent: 'center', marginVertical: 8 },
-  tabButton: { paddingHorizontal: 16, paddingVertical: 8 },
-  tabActive: { borderBottomWidth: 2, borderColor: COLORS.appColor },
-  tabText: { fontSize: 16, color: '#555' },
-  tabTextActive: { color: COLORS.appColor },
-  searchRow: { paddingHorizontal: 16, marginBottom: 8 },
+  container: {flex: 1, backgroundColor: '#f8faff'},
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  backBtn: {padding: 6},
+  headerTitle: {flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold'},
+  tabRow: {flexDirection: 'row', justifyContent: 'center', marginVertical: 8},
+  tabButton: {paddingHorizontal: 16, paddingVertical: 8},
+  tabActive: {borderBottomWidth: 2, borderColor: COLORS.appColor},
+  tabText: {fontSize: 16, color: '#555'},
+  tabTextActive: {color: COLORS.appColor},
+  searchRow: {paddingHorizontal: 16, marginBottom: 8},
   searchInput: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -148,10 +161,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 8,
   },
-  avatar: { width: 48, height: 48, borderRadius: 24 },
-  chatName: { fontSize: 16, fontWeight: '500' },
-  chatMsg: { color: '#666', marginTop: 4 },
-  chatTime: { fontSize: 12, color: '#999' },
+  avatar: {width: 48, height: 48, borderRadius: 24},
+  chatName: {fontSize: 16, fontWeight: '500'},
+  chatMsg: {color: '#666', marginTop: 4},
+  chatTime: {fontSize: 12, color: '#999'},
 });
 
 export default Inbox;

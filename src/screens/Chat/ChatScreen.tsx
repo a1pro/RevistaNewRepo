@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,10 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '../../types';
-
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootStackParamList} from '../../types';
 
 type ChatScreenRouteProp = RouteProp<RootStackParamList, 'ChatScreen'>;
 
@@ -24,12 +24,12 @@ type Message = {
 };
 
 const ChatScreen: React.FC = () => {
-  const { user } = useRoute<ChatScreenRouteProp>().params;
+  const {user} = useRoute<ChatScreenRouteProp>().params;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const ws = useRef<WebSocket | null>(null);
 
-  const webSocketUrl = 'wss://echo.websocket.events'; 
+  const webSocketUrl = 'wss://echo.websocket.events';
 
   useEffect(() => {
     ws.current = new WebSocket(webSocketUrl);
@@ -66,57 +66,60 @@ const ChatScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={80}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <Image
-          source={typeof user.avatar === 'string' ? { uri: user.avatar } : user.avatar}
-          style={styles.avatar}
-        />
-        <Text style={styles.headerTitle}>{user.name}</Text>
-      </View>
+    <SafeAreaView style={{flex: 1}}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={80}>
+        {/* Header */}
 
-      {/* Messages */}
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id}
-        inverted
-        contentContainerStyle={{ padding: 12 }}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.bubble,
-              item.sender === 'me' ? styles.myBubble : styles.theirBubble,
-            ]}
-          >
-            <Text style={styles.bubbleText}>{item.text}</Text>
-            <Text style={styles.bubbleTime}>{item.time}</Text>
-          </View>
-        )}
-      />
+        <View style={styles.header}>
+          <Image
+            source={
+              typeof user.avatar === 'string' ? {uri: user.avatar} : user.avatar
+            }
+            style={styles.avatar}
+          />
+          <Text style={styles.headerTitle}>{user.name}</Text>
+        </View>
 
-      {/* Input */}
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type message..."
-          value={input}
-          onChangeText={setInput}
+        {/* Messages */}
+        <FlatList
+          data={messages}
+          keyExtractor={item => item.id}
+          inverted
+          contentContainerStyle={{padding: 12}}
+          renderItem={({item}) => (
+            <View
+              style={[
+                styles.bubble,
+                item.sender === 'me' ? styles.myBubble : styles.theirBubble,
+              ]}>
+              <Text style={styles.bubbleText}>{item.text}</Text>
+              <Text style={styles.bubbleTime}>{item.time}</Text>
+            </View>
+          )}
         />
-        <TouchableOpacity style={styles.sendBtn} onPress={sendMessage}>
-          <Text style={styles.sendText}>➤</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+
+        {/* Input */}
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="Type message..."
+            value={input}
+            onChangeText={setInput}
+          />
+          <TouchableOpacity style={styles.sendBtn} onPress={sendMessage}>
+            <Text style={styles.sendText}>➤</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f2f5f8' },
+  container: {flex: 1, backgroundColor: '#f2f5f8'},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -125,8 +128,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ececec',
   },
-  avatar: { width: 36, height: 36, borderRadius: 18, marginRight: 10 },
-  headerTitle: { fontSize: 18, fontWeight: '600' },
+  avatar: {width: 36, height: 36, borderRadius: 18, marginRight: 10},
+  headerTitle: {fontSize: 18, fontWeight: '600'},
 
   bubble: {
     maxWidth: '75%',
@@ -142,8 +145,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5EA',
     alignSelf: 'flex-start',
   },
-  bubbleText: { color: '#000' },
-  bubbleTime: { fontSize: 10, color: '#666', marginTop: 4, textAlign: 'right' },
+  bubbleText: {color: '#000'},
+  bubbleTime: {fontSize: 10, color: '#666', marginTop: 4, textAlign: 'right'},
 
   inputRow: {
     flexDirection: 'row',
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendText: { color: '#fff', fontSize: 18 },
+  sendText: {color: '#fff', fontSize: 18},
 });
 
 export default ChatScreen;
