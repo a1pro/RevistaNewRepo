@@ -29,10 +29,9 @@ const CategoryCard = ({ item }: CategoryCardProps) => {
           onLoadEnd={() => setImageLoading(false)}
         />
         {imageLoading && (
-          <ActivityIndicator
-            style={styles.activityIndicator}
-            size="large"
-            color="#0000ff"
+          <Image
+            source={require('../../assets/subcategory/loading.gif')}
+            style={{ width: 200, height: 200,  alignItems: "center" ,position:"absolute"}}
           />
         )}
       </View>

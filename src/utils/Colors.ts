@@ -11,7 +11,10 @@ const COLORS = {
   smsBack: '#E5EBFC',
   emailBck: '#FFEBEB',
   red: 'red',
-  white:'#ffff'
+  white:'#ffff',
+  revista:"#1B1B1B",
+  revista2:"#3B3B3B",
+  revista3:"EDEDED"
 };
 
 export default COLORS;

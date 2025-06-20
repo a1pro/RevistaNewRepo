@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -10,25 +10,25 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
-import {CustomText} from '../../components/CustomText';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
+import { CustomText } from '../../components/CustomText';
 import COLORS from '../../utils/Colors';
-import {verticalScale} from '../../utils/Metrics';
-import {useDispatch} from 'react-redux';
-import {addCartItem} from '../../redux/slice/cartSlice';
+import { verticalScale } from '../../utils/Metrics';
+import { useDispatch } from 'react-redux';
+import { addCartItem } from '../../redux/slice/cartSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_Url} from '../../utils/ApiUrl';
-import {removeFavourite} from '../../redux/slice/favouriteSlice';
+import { Base_Url } from '../../utils/ApiUrl';
+import { removeFavourite } from '../../redux/slice/favouriteSlice';
 import VectorIcon from '../../components/VectorIcon';
 import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WishList'>;
 
 interface WishlistItem {
-  id: number; // wishlist row id
-  product_id: number; // actual product id
+  id: number; 
+  product_id: number; 
   product_full_info: {
     id: number;
     name: string;
@@ -41,7 +41,7 @@ interface WishlistItem {
   [key: string]: any;
 }
 
-const WishList: React.FC<Props> = ({navigation}) => {
+const WishList: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +49,6 @@ const WishList: React.FC<Props> = ({navigation}) => {
   const [cartLoading, setCartLoading] = useState<number | null>(null);
   const [clearLoading, setClearLoading] = useState(false);
 
-  // Fetch wishlist data from API
   useEffect(() => {
     fetchWishlist();
   }, []);
@@ -128,7 +127,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
         text1: 'Error',
         text2: error?.response?.data?.message || 'Error adding to cart.',
       });
-     
+
     } finally {
       setCartLoading(null);
     }
@@ -155,7 +154,6 @@ const WishList: React.FC<Props> = ({navigation}) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      // Accept both possible response formats
       if (
         res.data &&
         (res.data === 'successfully removed!' ||
@@ -165,7 +163,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
         setWishlistItems(prev =>
           prev.filter(item => item.product_id !== product_id),
         );
-        dispatch(removeFavourite({id: product_id}));
+        dispatch(removeFavourite({ id: product_id }));
         Toast.show({
           type: 'success',
           text1: 'Success',
@@ -177,7 +175,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
           text1: 'Error',
           text2: res.data?.message || 'Failed to remove product from wishlist.',
         });
-       
+
       }
     } catch (error: any) {
       Toast.show({
@@ -186,7 +184,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
         text2: error?.response?.data?.message ||
           'Failed to remove product from wishlist.',
       });
-     
+
     } finally {
       setLoading(false);
     }
@@ -239,7 +237,7 @@ const WishList: React.FC<Props> = ({navigation}) => {
         text1: 'Error',
         text2: err?.response?.data?.message || 'Failed to clear wishlist.',
       });
-     
+
     } finally {
       setClearLoading(false);
     }
@@ -252,12 +250,12 @@ const WishList: React.FC<Props> = ({navigation}) => {
         return parsed[0];
       }
     } catch (e) {
-      return images; // fallback if parsing fails
+      return images; 
     }
     return images;
   };
 
-  const renderItem = ({item}: {item: WishlistItem}) => {
+  const renderItem = ({ item }: { item: WishlistItem }) => {
     const imageName = getFirstImage(item.product_full_info.images);
     const imageUrl = imageName
       ? `https://revista-sa.com/storage/app/public/product/${imageName}`
@@ -265,8 +263,8 @@ const WishList: React.FC<Props> = ({navigation}) => {
 
     return (
       <View style={styles.itemRow}>
-        <Image source={{uri: imageUrl}} style={styles.itemImage} />
-        <View style={{flex: 1, marginLeft: 10}}>
+        <Image source={{ uri: imageUrl }} style={styles.itemImage} />
+        <View style={{ flex: 1, marginLeft: 10 }}>
           <CustomText style={styles.itemName}>
             {item.product_full_info.name}
           </CustomText>
@@ -283,9 +281,12 @@ const WishList: React.FC<Props> = ({navigation}) => {
             onPress={() => handleAddToCart(item)}
             disabled={cartLoading === item.id}>
             {cartLoading === item.id ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <Image
+                source={require('../../assets/subcategory/loading.gif')}
+                style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
+              />
             ) : (
-              <CustomText color="#fff" fontWeight="bold" style={{fontSize: 13}}>
+              <CustomText color="#fff" fontWeight="bold" style={{ fontSize: 13 }}>
                 Add to Cart
               </CustomText>
             )}
@@ -304,7 +305,10 @@ const WishList: React.FC<Props> = ({navigation}) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#0066FF" style={{flex: 1}} />
+        <Image
+          source={require('../../assets/subcategory/loading.gif')}
+          style={{ width: 500, height: 500, alignSelf: "center", alignItems: "center" }}
+        />
       </SafeAreaView>
     );
   }
@@ -320,7 +324,6 @@ const WishList: React.FC<Props> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Back Button */}
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
@@ -332,7 +335,6 @@ const WishList: React.FC<Props> = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        {/* Header */}
         <CustomText
           type="heading"
           color={COLORS.textColor}
@@ -341,11 +343,10 @@ const WishList: React.FC<Props> = ({navigation}) => {
           Wishlist
         </CustomText>
 
-        {/* Wishlist List */}
         <FlatList
           data={wishlistItems}
           keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{paddingBottom: 20}}
+          contentContainerStyle={{ paddingBottom: 20 }}
           renderItem={renderItem}
           ListEmptyComponent={
             <CustomText style={styles.emptyText}>
@@ -354,14 +355,16 @@ const WishList: React.FC<Props> = ({navigation}) => {
           }
         />
 
-        {/* Clear Wishlist Button */}
         {wishlistItems.length > 0 && (
           <TouchableOpacity
             style={styles.clearBtn}
             onPress={handleClearWishlist}
             disabled={clearLoading}>
             {clearLoading ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <Image
+                source={require('../../assets/subcategory/loading.gif')}
+                style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
+              />
             ) : (
               <CustomText color="#fff" fontWeight="bold">
                 Clear Wishlist
@@ -375,8 +378,8 @@ const WishList: React.FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
-  innerContainer: {flex: 1, paddingHorizontal: 10, paddingTop: 10},
+  container: { flex: 1, backgroundColor: '#fff' },
+  innerContainer: { flex: 1, paddingHorizontal: 10, paddingTop: 10 },
   backButton: {
     position: 'absolute',
     left: 20,
@@ -389,7 +392,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
     marginTop: verticalScale(16),
-    marginLeft: 36, // To offset for back button
+    marginLeft: 36,
   },
   itemRow: {
     flexDirection: 'row',
@@ -400,10 +403,10 @@ const styles = StyleSheet.create({
     padding: 10,
     position: 'relative',
   },
-  itemImage: {width: 70, height: 70, borderRadius: 8, marginRight: 6},
-  itemName: {fontSize: 14, color: COLORS.textColor, marginBottom: 2},
-  itemDesc: {fontSize: 12, color: '#888', marginBottom: 4},
-  itemPrice: {fontSize: 16, color: COLORS.textColor, marginBottom: 6},
+  itemImage: { width: 70, height: 70, borderRadius: 8, marginRight: 6 },
+  itemName: { fontSize: 14, color: COLORS.textColor, marginBottom: 2 },
+  itemDesc: { fontSize: 12, color: '#888', marginBottom: 4 },
+  itemPrice: { fontSize: 16, color: COLORS.textColor, marginBottom: 6 },
   addToCartBtn: {
     backgroundColor: '#0066FF',
     borderRadius: 6,

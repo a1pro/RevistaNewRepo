@@ -18,15 +18,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Order'>;
-
-// Helper function to get a default product image based on order index
 const getDefaultImage = (index: number) => {
   const images = [IMAGES.cream1, IMAGES.cream, IMAGES.cream2];
   return images[index % images.length];
 };
 
 const Order: React.FC<Props> = ({ navigation }) => {
-  // Get orders from Redux
+ 
   const orders = useSelector((state: RootState) => state.orders.orders);
   console.log('Orders:', orders);
 
@@ -36,17 +34,8 @@ const renderOrder = ({ item, index }: { item: any; index: number }) => {
   const firstProduct = item.items[0];
   const firstImage = firstProduct.thumbnail;
 
-  // let imageSource;
-  // if (firstImage) {
-  //   imageSource = firstImage.startsWith('http')
-  //     ?
-  //      { uri: `${BASE_IMAGE_URL}${firstImage}` }
-  //     : { uri: firstImage }
-  // } else {
-  //   imageSource = getDefaultImage(index);
-  // }
-
   return (
+    <SafeAreaView>
     <View style={styles.orderCard}>
       <Image
         source={firstImage ? { uri: `${BASE_IMAGE_URL}${firstImage}` } : getDefaultImage(index)}
@@ -85,6 +74,7 @@ const renderOrder = ({ item, index }: { item: any; index: number }) => {
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaView>
   );
 };
 
@@ -92,7 +82,6 @@ const renderOrder = ({ item, index }: { item: any; index: number }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
-        {/* Header Row */}
         <View style={styles.headerRow}>
           <TouchableOpacity
             style={styles.backButton}

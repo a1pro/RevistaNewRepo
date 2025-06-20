@@ -16,7 +16,7 @@ import IMAGES from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 36) / 2; 
+const CARD_WIDTH = (width - 36) / 2;
 const CARD_HEIGHT = 150;
 
 const BANNER_BASE_URL = 'https://revista-sa.com/storage/app/public/shop/banner/';
@@ -100,14 +100,17 @@ const AllSellerScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.appColor || '#007bff'} />
+        <Image
+          source={require('../../assets/subcategory/loading.gif')}
+          style={{ width: 500, height: 500, alignSelf: "center", alignItems: "center" }}
+        />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-        <View style={styles.headerContainer}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 5,
   },
-    headerContainer: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

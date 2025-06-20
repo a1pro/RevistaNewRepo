@@ -95,7 +95,10 @@ const MagzineProduct: React.FC = () => {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Loading...</Text>
+        <Image
+          source={require('../../assets/subcategory/loading.gif')}
+          style={{ width: 500, height: 500, alignSelf: "center", alignItems: "center" }}
+        />
       </SafeAreaView>
     );
   }

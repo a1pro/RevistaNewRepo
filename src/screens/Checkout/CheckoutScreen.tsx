@@ -20,7 +20,6 @@ import VectorIcon from '../../components/VectorIcon';
 import { Base_Url } from '../../utils/ApiUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-// Define types for navigation and route params
 type RootStackParamList = {
   CheckoutScreen: { cartItems: OrderItem[]; total: number; address?: string };
   Address: undefined;
@@ -44,8 +43,6 @@ const CheckoutScreen: React.FC = () => {
     params.cartItems.forEach((item) => {
       const itemTotal = item.price * item.quantity;
       subTotal += itemTotal;
-
-      // Discount
       let discountAmount = 0;
       if (item.discount_type === 'flat') {
         discountAmount = item.discount * item.quantity;
@@ -53,12 +50,8 @@ const CheckoutScreen: React.FC = () => {
         discountAmount = (item.price * item.discount / 100) * item.quantity;
       }
       totalDiscount += discountAmount;
-
-      // Tax
       let taxAmount = (item.tax / 100) * item.price * item.quantity;
       totalTax += taxAmount;
-
-      // Shipping
       totalShipping += item.shipping_cost;
     });
 
@@ -104,7 +97,6 @@ const handleCheckout = async () => {
     text2: 'Your order has been placed.',
   });
 
-  // Call clear cart API
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) throw new Error('No token found');
@@ -120,13 +112,12 @@ const handleCheckout = async () => {
       (res.data === 'Successfully removed' ||
         res.data.message === 'Successfully removed')
     ) {
-      // setCartItems && setCartItems([]); // Only if you have setCartItems in scope
       Toast.show({
         type: 'success',
         text1: 'Success',
         text2: 'Products removed from cart.',
       });
-      navigation.navigate('Dashboard'); // or 'HomeScreen' as needed
+      navigation.navigate('Dashboard');
     } else {
       Toast.show({
         type: 'error',
@@ -227,7 +218,6 @@ const handleCheckout = async () => {
   );
 };
 
-// Styles remain the same as in your original code
 const styles = StyleSheet.create({
   container: { padding: 16, backgroundColor: '#fff', flexGrow: 1 },
   summaryBox: {

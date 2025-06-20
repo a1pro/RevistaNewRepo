@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   SafeAreaView,
@@ -7,18 +7,19 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
-import {CustomText} from '../../components/CustomText';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { CustomText } from '../../components/CustomText';
 import COLORS from '../../utils/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './style';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Base_Url} from '../../utils/ApiUrl';
+import { Base_Url } from '../../utils/ApiUrl';
 import VectorIcon from '../../components/VectorIcon';
+import { Image } from 'react-native';
 
 type AddressType = {
   id: number | string;
@@ -30,7 +31,7 @@ type AddressType = {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SaveAddress'>;
 
-const SaveAddress: React.FC<Props> = ({navigation}) => {
+const SaveAddress: React.FC<Props> = ({ navigation }) => {
   const [addresses, setAddresses] = useState<AddressType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -94,10 +95,9 @@ const SaveAddress: React.FC<Props> = ({navigation}) => {
         </View>
 
         {loading ? (
-          <ActivityIndicator
-            size="large"
-            color={COLORS.appColor || '#0066FF'}
-            style={{marginTop: 40}}
+          <Image
+            source={require('../../assets/subcategory/loading.gif')}
+            style={{ width: 500, height: 500, alignSelf: "center", alignItems: "center" }}
           />
         ) : error ? (
           <View style={styles.addressBox}>
@@ -113,7 +113,7 @@ const SaveAddress: React.FC<Props> = ({navigation}) => {
           <FlatList
             data={addresses}
             keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View
                 style={[
                   styles.addressBox,
@@ -136,7 +136,7 @@ const SaveAddress: React.FC<Props> = ({navigation}) => {
                       name="check-circle"
                       size={18}
                       color={COLORS.appColor || '#0066FF'}
-                      style={{marginLeft: 4}}
+                      style={{ marginLeft: 4 }}
                     />
                   )}
                 </View>
@@ -163,7 +163,7 @@ const SaveAddress: React.FC<Props> = ({navigation}) => {
                 </CustomText>
               </View>
             )}
-            contentContainerStyle={{paddingBottom: 20}}
+            contentContainerStyle={{ paddingBottom: 20 }}
           />
         )}
       </View>

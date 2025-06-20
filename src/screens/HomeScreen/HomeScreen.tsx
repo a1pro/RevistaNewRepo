@@ -36,7 +36,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.appColor} />
+         <Image
+        source={require('../../assets/subcategory/loading.gif')}
+        style={{ width: 500, height: 500 }}
+      />
       </SafeAreaView>
     );
   }
@@ -91,17 +94,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               />
             </View>
           )}
-
-          {/* Show only LatestProduct when searching (searchQuery not empty) */}
           {searchQuery ? (
             <LatestProduct searchQuery={searchQuery} />
           ) : (
-            // Show full home screen when search field is empty
             <>
               <BannerSlider />
               <HandmadeProducts />
               <FlashSale />
-              {/* <CategorySection /> */}
               <TopSeller />
               <LatestProduct searchQuery={searchQuery} />
             </>

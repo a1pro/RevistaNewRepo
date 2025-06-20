@@ -261,7 +261,10 @@ const AddtoCart: React.FC = () => {
   };
 
   if (loading)
-    return <ActivityIndicator size="large" color={COLORS.appColor} style={{ flex: 1 }} />;
+    return  <Image
+            source={require('../../assets/subcategory/loading.gif')}
+            style={{ width: 500, height: 500 ,alignSelf:"center"}}
+          />;
 
   return (
     <SafeAreaView style={styles.container}>

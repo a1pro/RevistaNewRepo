@@ -90,7 +90,10 @@ const AllCategories: React.FC<Props> = ({navigation}) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#000" />
+           <Image
+                  source={require('../../assets/subcategory/loading.gif')}
+                  style={{ width: 500, height: 500 ,alignSelf:"center"}}
+                />
         </View>
       </SafeAreaView>
     );

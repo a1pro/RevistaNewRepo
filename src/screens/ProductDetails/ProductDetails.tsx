@@ -140,7 +140,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           text1: 'Success',
           text2: res.data.message || 'Product added to wishlist!',
         });
-       
+
       } else {
         Toast.show({
           type: 'error',
@@ -154,7 +154,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         text1: 'Error',
         text2: (error as any)?.response?.data?.message || 'Error adding to wishlist.',
       });
-      
+
     } finally {
       setWishlistLoading(false);
     }
@@ -206,7 +206,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         text2: (error as any)?.response?.data?.message ||
           'Failed to remove product from wishlist.',
       });
-    
+
     } finally {
       setWishlistLoading(false);
     }
@@ -253,7 +253,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         text1: 'Error',
         text2: error?.response?.data?.message || 'Error adding to cart.',
       });
-      
+
     } finally {
       setCartLoading(false);
     }
@@ -334,7 +334,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         text1: 'Error',
         text2: error?.response?.data?.message || 'Error submitting review.',
       });
-     
+
     } finally {
       setSubmittingReview(false);
     }
@@ -359,7 +359,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         text1: 'Error',
         text2: 'Failed to load reviews',
       });
-     
+
     } finally {
       setReviewsLoading(false);
     }
@@ -463,10 +463,9 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         </View>
         <Text style={styles.sectionTitle}>Similar Products</Text>
         {similarLoading ? (
-          <ActivityIndicator
-            size="small"
-            color="#1663F7"
-            style={{ marginVertical: 16 }}
+          <Image
+            source={require('../../assets/subcategory/loading.gif')}
+            style={{ width: 100, height: 100, alignSelf: "center", alignItems: "center" }}
           />
         ) : similarProducts.length === 0 ? (
           <Text style={{ color: '#888', marginVertical: 8, marginLeft: 30 }}>
@@ -490,7 +489,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
                       (item as { images: string[] }).images.length &&
                       (item as { images: string[] }).images[0] && (item as { images: string[] }).images[0].startsWith('http')
                       ? { uri: (item as { images: string[] }).images[0] }
-                      : IMAGES.revista // fallback image
+                      : IMAGES.revista 
                   }
                   style={styles.similarImage}
                   resizeMode="cover"
@@ -514,7 +513,10 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           activeOpacity={0.7}
           disabled={wishlistLoading}>
           {wishlistLoading ? (
-            <ActivityIndicator size={20} color="red" />
+            <Image
+              source={require('../../assets/subcategory/loading.gif')}
+              style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
+            />
           ) : (
             <VectorIcon
               size={22}
@@ -529,20 +531,17 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           onPress={handleAddToCart}
           disabled={cartLoading}>
           {cartLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <Image
+              source={require('../../assets/subcategory/loading.gif')}
+              style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
+            />
           ) : (
             <Text style={styles.cartBtnText}>Add to Cart</Text>
           )}
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          style={styles.buyBtn}
-          onPress={() => navigation.navigate('Address')}>
-          <Text style={styles.buyBtnText}>Buy now</Text>
-        </TouchableOpacity> */}
       </View>
       <View style={styles.bottomBarUnderline} />
 
-      {/* Review Submit Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -587,7 +586,10 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
             onPress={submitReview}
             disabled={submittingReview}>
             {submittingReview ? (
-              <ActivityIndicator color="#fff" />
+              <Image
+                source={require('../../assets/subcategory/loading.gif')}
+                style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
+              />
             ) : (
               <Text style={localStyles.submitBtnText}>Say it!</Text>
             )}
@@ -595,7 +597,6 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         </View>
       </Modal>
 
-      {/* Reviews List Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -621,10 +622,9 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           </View>
           <ScrollView style={{ flex: 1 }}>
             {reviewsLoading ? (
-              <ActivityIndicator
-                size="large"
-                color="#1663F7"
-                style={{ marginTop: 40 }}
+              <Image
+                source={require('../../assets/subcategory/loading.gif')}
+                style={{ width: 80, height: 80, alignSelf: "center", alignItems: "center" }}
               />
             ) : reviews.length === 0 ? (
               <Text style={{ textAlign: 'center', marginTop: 30, color: '#888' }}>
@@ -717,7 +717,7 @@ const localStyles = StyleSheet.create({
     textAlign: 'center',
   },
   placeholder: {
-    width: 40, // Same width as back button to center the title
+    width: 40,
   },
   modalBackdrop: {
     flex: 1,

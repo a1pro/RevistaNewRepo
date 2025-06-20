@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import { 
+  FlatList, 
+  SafeAreaView, 
+  StyleSheet, 
+  Image, 
+  TextInput 
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
-import CategoryCard from './CategoryCard'; // Adjust path as needed
+import CategoryCard from './CategoryCard';
 
 interface MagazineCategory {
   id: number;
@@ -22,6 +28,8 @@ interface MagazineCategory {
 
 const Magzine: React.FC = () => {
   const [categories, setCategories] = useState<MagazineCategory[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<MagazineCategory[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +51,7 @@ const Magzine: React.FC = () => {
         );
         console.log('Magazine categories data:', response.data);
         setCategories(response.data);
+        setFilteredCategories(response.data);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       } finally {
@@ -52,18 +61,38 @@ const Magzine: React.FC = () => {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredCategories(categories);
+    } else {
+      const filtered = categories.filter(category =>
+        category.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredCategories(filtered);
+    }
+  }, [searchQuery, categories]);
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Loading...</Text>
+        <Image
+          source={require('../../assets/subcategory/loading.gif')}
+          style={{ width: 500, height: 500, alignSelf: 'center' }}
+        />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search categories..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
       <FlatList
-        data={categories}
+        data={filteredCategories}
         renderItem={({ item }) => <CategoryCard item={item} />}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
@@ -80,6 +109,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
+  },
+  searchBar: {
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    fontSize: 16,
   },
   row: {
     justifyContent: 'space-between',
