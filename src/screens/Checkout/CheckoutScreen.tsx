@@ -20,6 +20,7 @@ import VectorIcon from '../../components/VectorIcon';
 import { Base_Url } from '../../utils/ApiUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 type RootStackParamList = {
   CheckoutScreen: { cartItems: OrderItem[]; total: number; address?: string };
   Address: undefined;
@@ -31,6 +32,7 @@ const CheckoutScreen: React.FC = () => {
   const { params } = useRoute<CheckoutRouteProp>();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+   const { t } = useTranslation();
   const [coupon, setCoupon] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
@@ -76,8 +78,8 @@ const handleCheckout = async () => {
   if (!selectedPaymentMethod) {
     Toast.show({
       type: 'error',
-      text1: 'Select Payment Method',
-      text2: 'Please select a payment method to proceed.',
+      text1: t("paymentMethod"),
+      text2: t("selectMethod"),
     });
     return;
   }
@@ -93,8 +95,8 @@ const handleCheckout = async () => {
 
   Toast.show({
     type: 'success',
-    text1: 'Successful',
-    text2: 'Your order has been placed.',
+    text1: t ('success'),
+    text2: t("orderPlaced"),
   });
 
   try {
@@ -114,29 +116,29 @@ const handleCheckout = async () => {
     ) {
       Toast.show({
         type: 'success',
-        text1: 'Success',
-        text2: 'Products removed from cart.',
+        text1: t('success'),
+        text2: t("productRemoved"),
       });
       navigation.navigate('Dashboard');
     } else {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: res.data?.message || 'Failed to remove products from cart.',
+        text1: t('error') ,
+        text2: res.data?.message || t('failedproductRemoved'),
       });
     }
   } catch (err: any) {
     if (err.response) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: err.response.data?.message || 'Failed to clear product from cart.',
+        text1:t ('error'),
+        text2: err.response.data?.message || t("clearFullCart"),
       });
     } else {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to clear product from cart.',
+        text1: t('error'),
+        text2: t("clearFullCart"),
       });
     }
   }
@@ -148,70 +150,70 @@ const handleCheckout = async () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <VectorIcon size={24} type="AntDesign" name="left" color={COLORS.black} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order Summary</Text>
+        <Text style={styles.headerTitle}>{t("orderSummary")}</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.summaryBox}>
           <View style={styles.row}>
-            <Text style={styles.label}>Sub total</Text>
+            <Text style={styles.label}>{t("subTotal")}</Text>
             <Text style={styles.value}>{subTotal.toFixed(2)} ﷼</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Tax</Text>
+            <Text style={styles.label}>{t('tax')}</Text>
             <Text style={styles.value}>{totalTax.toFixed(2)} ﷼</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Shipping</Text>
+            <Text style={styles.label}>{t("shipping")}</Text>
             <Text style={styles.value}>{totalShipping.toFixed(2)} ﷼</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Discount</Text>
+            <Text style={styles.label}>{t("discount")}</Text>
             <Text style={styles.value}>- {totalDiscount.toFixed(2)} ﷼</Text>
           </View>
 
           <View style={styles.row}>
-            <Text style={[styles.label, styles.totalLabel]}>Total</Text>
+            <Text style={[styles.label, styles.totalLabel]}>{t('total')}</Text>
             <Text style={[styles.value, styles.totalValue]}>{total.toFixed(2)} ﷼</Text>
           </View>
         </View>
 
-        <Text style={styles.paymentTitle}>Select A Payment Method To Proceed</Text>
+        <Text style={styles.paymentTitle}>{t('paymentSelection')}</Text>
         <View style={styles.paymentMethods}>
           <TouchableOpacity
             style={[styles.paymentOption, selectedPaymentMethod === 'cod' && styles.selectedPayment]}
             onPress={() => setSelectedPaymentMethod('cod')}
           >
             <MaterialCommunityIcons name="cash" size={20} color="#333" />
-            <Text style={styles.paymentText}> Cash On Delivery</Text>
+            <Text style={styles.paymentText}> {t("cod")}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.featuresRow}>
           <View style={styles.feature}>
             <MaterialCommunityIcons name="truck-fast" size={28} color="#4caf50" />
-            <Text style={styles.featureText}>Fast Delivery all across the country</Text>
+            <Text style={styles.featureText}>{t('fastDelivery')}</Text>
           </View>
           <View style={styles.feature}>
             <FontAwesome5 name="shield-alt" size={28} color="#2196f3" />
-            <Text style={styles.featureText}>Safe Payment</Text>
+            <Text style={styles.featureText}>{t('safePayment')}</Text>
           </View>
           <View style={styles.feature}>
             <Ionicons name="refresh-circle" size={28} color="#ff9800" />
-            <Text style={styles.featureText}>7 Days Return Policy</Text>
+            <Text style={styles.featureText}>{t('returnPolicy')}</Text>
           </View>
           <View style={styles.feature}>
             <MaterialCommunityIcons name="certificate" size={28} color="#9c27b0" />
-            <Text style={styles.featureText}>100% Authentic Products</Text>
+            <Text style={styles.featureText}>{t('product100')}</Text>
           </View>
         </View>
 
         <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout}>
-          <Text style={styles.checkoutBtnText}>Place Order</Text>
+          <Text style={styles.checkoutBtnText}>{t('placeorder')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.continueBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.continueBtnText}>Continue Shopping</Text>
+          <Text style={styles.continueBtnText}>{t('continueshopping')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

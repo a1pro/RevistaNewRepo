@@ -12,7 +12,7 @@ import VectorIcon from '../../components/VectorIcon';
 import {verticalScale} from '../../utils/Metrics';
 import COLORS from '../../utils/Colors';
 import IMAGES from '../../assets/images';
-
+import { useTranslation } from 'react-i18next';
 interface Product {
   id: string;
   name: string;
@@ -56,6 +56,7 @@ const products: Product[] = [
 const {width} = Dimensions.get('window');
 
 const HandmadeProducts: React.FC = () => {
+  const { t } = useTranslation();
   const renderItem = ({item}: {item: Product}) => (
     <View style={styles.itemContainer}>
       <Image source={item.image} style={styles.image} />
@@ -67,9 +68,9 @@ const HandmadeProducts: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Handmade Products</Text>
+        <Text style={styles.title}>{t('handmade')}</Text>
         <TouchableOpacity style={styles.seeAllButton}>
-          <Text style={styles.seeAllText}>See All</Text>
+          <Text style={styles.seeAllText}>{t("seeAll")}</Text>
           <VectorIcon
             size={30}
             type="Ionicons"

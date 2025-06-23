@@ -10,6 +10,8 @@ import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 import {AuthProvider} from './src/context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './src/context/i18n';
 LogBox.ignoreAllLogs();
 const requestAppPermissions = async () => {
   try {
@@ -41,12 +43,14 @@ export default function App() {
 
   return (
     <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
       <AuthProvider>
         <GestureHandlerRootView style={{flex: 1}}>
           <AppNavigator />
           <Toast/>
         </GestureHandlerRootView>
       </AuthProvider>
+      </I18nextProvider>
     </Provider>
   );
 }

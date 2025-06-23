@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, I18nManager } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 
 import styles from './style';
 import COLORS from '../../utils/Colors';
@@ -17,40 +18,37 @@ const LANGUAGES = [
 type Props = NativeStackScreenProps<RootStackParamList, 'Language'>;
 
 const Language: React.FC<Props> = ({ navigation }) => {
+  const { t, i18n } = useTranslation();
   const [selected, setSelected] = useState<string>('en');
 
-  const changeLanguageApi = async (language_code: string) => {
-    try {
-      console.log('Sending language code:', language_code);
-      const response = await axios.post('https://www.revista-sa.com/api/change-language', {
-        language_code,
-      });
-      console.log('API response:', response.data);
-
-      if (
-        response.data.message === "Language changed successfully." ||
-        response.data.message === "تم تغيير اللغة بنجاح."
-      ) {
-        const alertMessage = 
-          language_code === 'en' 
-            ? 'Language changed successfully.' 
-            : 'تم تغيير اللغة بنجاح.';
-        Alert.alert('Success', alertMessage);
-      }
-    } catch (error) {
-      console.error('Error changing language:', error);
-      Alert.alert('Error', 'Failed to change language. Please try again.');
-    }
-  };
+  // Optional: Load saved language from AsyncStorage on mount
+  useEffect(() => {
+    // Example using AsyncStorage:
+    // AsyncStorage.getItem('appLanguage').then(lang => {
+    //   if (lang) {
+    //     setSelected(lang);
+    //     const i18nLang = lang === 'sa' ? 'ar' : lang;
+    //     i18n.changeLanguage(i18nLang);
+    //     I18nManager.allowRTL(i18nLang === 'ar');
+    //     I18nManager.forceRTL(i18nLang === 'ar');
+    //   }
+    // });
+  }, []);
 
   const onSelectLanguage = (langKey: string) => {
     setSelected(langKey);
-    // Note: You had `codeToSend = langKey === 'en' ? 'sa' : langKey;`
-    // This would send 'sa' for English and 'sa' for Arabic, which seems wrong.
-    // Based on your description, you want to send 'en' for English, 'sa' for Arabic.
-    // So, send langKey directly as codeToSend.
-    const codeToSend = langKey; // This matches your LANGUAGES array keys
-    changeLanguageApi(codeToSend);
+    // Map 'sa' to 'ar' for i18n
+    const i18nLang = langKey === 'sa' ? 'ar' : langKey;
+    i18n.changeLanguage(i18nLang);
+    I18nManager.allowRTL(i18nLang === 'ar');
+    I18nManager.forceRTL(i18nLang === 'ar');
+    // Optional: Save language to AsyncStorage
+    // AsyncStorage.setItem('appLanguage', langKey);
+    Toast.show({
+      type: 'success',
+      text1: t('success'),
+      text2: t('changeLanguageSuccess'),
+    });
   };
 
   return (
@@ -67,13 +65,12 @@ const Language: React.FC<Props> = ({ navigation }) => {
           />
         </TouchableOpacity>
 
-        {/* Header */}
         <CustomText
-         type="heading"
+          type="heading"
           color={COLORS.textColor}
           fontWeight="bold"
           style={styles.header}>
-          Language
+          {t('language')}
         </CustomText>
         <View style={styles.optionsContainer}>
           {LANGUAGES.map(lang => (

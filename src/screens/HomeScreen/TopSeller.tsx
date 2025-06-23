@@ -15,7 +15,7 @@ import axios from 'axios';
 import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.42;
 const CARD_HEIGHT = 250;
@@ -26,7 +26,7 @@ const AVATAR_BASE_URL = 'https://revista-sa.com/storage/app/public/seller/';
 const TopSeller = () => {
   const [sellers, setSellers] = useState([]);
   const navigation = useNavigation();
-
+ const { t } = useTranslation();
   const fetchSellers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -84,16 +84,16 @@ const TopSeller = () => {
           <View style={styles.ratingRow}>
             <Text style={styles.ratingText}>{parseFloat(rating).toFixed(1)}</Text>
             <VectorIcon type="FontAwesome" name="star" size={14} color="#FFA500" style={{ marginLeft: 2 }} />
-            <Text style={styles.ratingLabel}> Rating</Text>
+            <Text style={styles.ratingLabel}> {t("rating")}</Text>
           </View>
           <View style={styles.statsRow}>
             <View style={styles.statsBox}>
               <Text style={styles.statsNumber}>{reviews}</Text>
-              <Text style={styles.statsLabel}>Reviews</Text>
+              <Text style={styles.statsLabel}>{t("reviews")}</Text>
             </View>
             <View style={styles.statsBox}>
               <Text style={styles.statsNumber}>{productsCount}</Text>
-              <Text style={styles.statsLabel}>Products</Text>
+              <Text style={styles.statsLabel}>{t('products')}</Text>
             </View>
           </View>
         </View>
@@ -105,9 +105,9 @@ const TopSeller = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Top Sellers</Text>
+        <Text style={styles.headerTitle}>{t("topSellers")}</Text>
         <TouchableOpacity style={styles.viewAllBtn} onPress={() => navigation.navigate('AllSellerScreen')}>
-          <Text style={styles.viewAllText}>View All</Text>
+          <Text style={styles.viewAllText}>{t("seeAll")}</Text>
         </TouchableOpacity>
       </View>
       <FlatList

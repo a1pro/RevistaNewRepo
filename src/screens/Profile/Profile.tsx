@@ -7,7 +7,6 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types';
 import { CustomText } from '../../components/CustomText';
@@ -22,24 +21,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Base_Url } from '../../utils/ApiUrl';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
-
-const menuItems = [
-  { title: 'Orders', screen: 'Order' },
-  { title: 'Wishlist', screen: 'WishList' },
-  { title: 'Language', screen: 'Language' },
-   { title: 'Inbox', screen: 'Inbox' },
-  { title: 'Save Address', screen: 'SaveAddress' },
-  { title: 'Terms & Conditions', screen: 'Terms' },
-];
 
 const Profile: React.FC<Props> = ({ navigation }) => {
   const { logout } = useAuth();
   const [userName, setUserName] = useState<string>('');
   const [profileImage, setProfileImage] = useState<any>(IMAGES.profile);
   const [userData, setUserData] = useState(null);
+  const { t } = useTranslation();
   const PROFILE_IMAGE_BASE_URL = 'https://revista-sa.com/storage/app/public/profile/';
+
+  // Define menuItems inside the component to use translations
+  const menuItems = [
+    { title: t('orders'), screen: 'Order' },
+    { title: t('wishlist'), screen: 'WishList' },
+    { title: t('language'), screen: 'Language' },
+    { title: t('inbox'), screen: 'Inbox' },
+    { title: t('saveAddress'), screen: 'SaveAddress' },
+    { title: t('termsConditions'), screen: 'Terms' },
+  ];
+
   useFocusEffect(
     useCallback(() => {
       const fetchProfile = async () => {
@@ -64,7 +67,6 @@ const Profile: React.FC<Props> = ({ navigation }) => {
             setUserName(`${customer.f_name || ''} ${customer.l_name || ''}`.trim());
             if (customer.image) {
               setProfileImage({ uri: `${PROFILE_IMAGE_BASE_URL}${customer.image}` });
-
             } else {
               setProfileImage(IMAGES.profile);
             }
@@ -79,13 +81,13 @@ const Profile: React.FC<Props> = ({ navigation }) => {
   );
 
   const handleLogout = async () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
+    Alert.alert(t('logout'), t('logoutConfirm'), [
       {
-        text: 'Cancel',
+        text: t('cancel'),
         style: 'cancel',
       },
       {
-        text: 'Logout',
+        text: t('logout'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -118,8 +120,8 @@ const Profile: React.FC<Props> = ({ navigation }) => {
             console.error('Logout failed:', error);
             Toast.show({
               type: 'error',
-              text1: 'Error',
-              text2: 'Failed to logout. Please try again.',
+              text1: t('error'),
+              text2: t('logoutFailed'),
             });
           }
         },
@@ -150,7 +152,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
           color={COLORS.textColor}
           fontWeight="bold"
           style={{ textAlign: 'center', padding: verticalScale(30) }}>
-          Account Settings
+          {t("accountSetting")}
         </CustomText>
 
         <View style={styles.profileSection}>
@@ -170,7 +172,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
               style={styles.editProfileText}
               color="#fff"
               fontWeight="bold">
-              Edit Profile
+              {t("editProfile")}
             </CustomText>
           </TouchableOpacity>
         </View>
@@ -180,21 +182,21 @@ const Profile: React.FC<Props> = ({ navigation }) => {
           style={styles.sectionTitle}
           fontWeight="bold"
           color={COLORS.textColor}>
-          Personal
+          {t('personal')}
         </CustomText>
 
         <View style={styles.menuList}>
           <FlatList
             data={menuItems}
             renderItem={renderItem}
-            keyExtractor={item => item.title}
+            keyExtractor={(item, index) => `${item.title}_${index}`}
             scrollEnabled={false}
           />
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <CustomText style={styles.logoutText} color="#fff" fontWeight="bold">
-            Log Out
+            {t('logout')}
           </CustomText>
         </TouchableOpacity>
       </View>

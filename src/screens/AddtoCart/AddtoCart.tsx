@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import COLORS from '../../utils/Colors';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 interface CartItem {
   id: number;
@@ -53,6 +54,7 @@ const AddtoCart: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [error, setError] = useState<string>('');
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   // Fetch cart items
@@ -141,28 +143,28 @@ const AddtoCart: React.FC = () => {
         setCartItems(prev => prev.filter(item => item.id !== id));
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Product removed from cart.',
+          text1: t('success'),
+          text2: t('productRemoved'),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data?.message || 'Failed to remove product from cart.',
+          text1: t('error'),
+          text2: res.data?.message ||t("failedproductRemoved"),
         });
       }
     } catch (err: any) {
       if (err.response) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: err.response.data?.message || 'Failed to remove product from cart.',
+          text1:t("error"),
+          text2: err.response.data?.message || t("failedproductRemoved"),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'Failed to remove product from cart.',
+          text1: t('error'),
+          text2: t("failedproductRemoved"),
         });
 
       }
@@ -191,29 +193,29 @@ const AddtoCart: React.FC = () => {
         setCartItems([]);
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Products removed from cart.',
+          text1: t('success'),
+          text2: t("productRemoved"),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data?.message || 'Failed to remove products from cart.',
+          text1: t("error"),
+          text2: res.data?.message || t("failedproductRemoved"),
         });
       }
     } catch (err: any) {
       if (err.response) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: err.response.data?.message || 'Failed to clear product from cart.',
+          text1: t("error"),
+          text2: err.response.data?.message || t("failedproductRemoved"),
         });
        
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'Failed to clear product from cart.',
+          text1: t("error"),
+          text2: t("failedproductRemoved"),
         });
       }
     } finally {
@@ -271,7 +273,7 @@ const AddtoCart: React.FC = () => {
       {cartItems.length === 0 ? (
         <View style={styles.emptyCartContainer}>
           <CustomText style={styles.emptyCartText}>
-            There are no products in your cart.
+            {t("noProduct")}
           </CustomText>
         </View>
       ) : (
@@ -279,7 +281,7 @@ const AddtoCart: React.FC = () => {
           {/* Shipping Address Section */}
           <View style={styles.addressContainer}>
             <View style={{ flex: 1 }}>
-              <CustomText style={styles.addressLabel}>Shipping Address</CustomText>
+              <CustomText style={styles.addressLabel}>{t("shippingAddress")}</CustomText>
               {shippingAddress ? (
                 <CustomText style={styles.addressText}>
                   {shippingAddress.contact_person_name}{"\n"}
@@ -287,7 +289,7 @@ const AddtoCart: React.FC = () => {
                   {shippingAddress.zip}
                 </CustomText>
               ) : (
-                <CustomText style={styles.addressText}>No Home address found.</CustomText>
+                <CustomText style={styles.addressText}>{t("noHomeAddress")}</CustomText>
               )}
             </View>
             <TouchableOpacity onPress={() => navigation.navigate?.('Address' as never)}>
@@ -299,7 +301,7 @@ const AddtoCart: React.FC = () => {
             keyExtractor={item => item.id.toString()}
             renderItem={renderItem}
           />
-          <CustomText style={styles.totalText}>Total: ﷼{getTotal().toFixed(2)}</CustomText>
+          <CustomText style={styles.totalText}>{t("total")}: ﷼{getTotal().toFixed(2)}</CustomText>
           <View style={styles.footer}>
             <TouchableOpacity
               style={styles.checkoutBtn}
@@ -307,17 +309,17 @@ const AddtoCart: React.FC = () => {
                 navigation.navigate('CheckoutScreen', {
                   cartItems,
                   total: getTotal(),
-                  address: shippingAddress, // Pass the selected address object
+                  address: shippingAddress, 
                 })
               }
             >
-              <CustomText style={styles.checkoutText}>Checkout</CustomText>
+              <CustomText style={styles.checkoutText}>{t('checkout')}</CustomText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.clearCartBtn}
               onPress={clearCart}
             >
-              <CustomText style={styles.clearCartText}>Clear Cart</CustomText>
+              <CustomText style={styles.clearCartText}>{t('clearCart')}</CustomText>
             </TouchableOpacity>
           </View>
         </>

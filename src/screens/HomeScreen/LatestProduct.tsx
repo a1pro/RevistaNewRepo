@@ -16,6 +16,7 @@ import axios from 'axios';
 import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.4;
@@ -25,12 +26,10 @@ interface Product {
   name: string;
   images: string[];
   unit_price: number;
-  // Add any other fields you need
 }
 
 const PRODUCT_IMAGE_MAP: Record<string, any> = {
   'dior': IMAGES.perfume1,
-  // Add more static fallbacks for product names if needed
 };
 
 interface LatestProductProps {
@@ -41,6 +40,7 @@ const LatestProduct: React.FC<LatestProductProps> = ({ searchQuery = '' }) => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const navigation = useNavigation();
+   const { t } = useTranslation();
 
   const fetchProducts = async () => {
     try {
@@ -117,9 +117,9 @@ const LatestProduct: React.FC<LatestProductProps> = ({ searchQuery = '' }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Latest Products</Text>
+        <Text style={styles.headerTitle}>{t("latestProducts")}</Text>
         <TouchableOpacity style={styles.viewAllBtn}>
-          <Text style={styles.viewAllText}>See All</Text>
+          <Text style={styles.viewAllText}>{t('seeAll')}</Text>
           <VectorIcon
             size={20}
             type="Ionicons"
@@ -131,10 +131,7 @@ const LatestProduct: React.FC<LatestProductProps> = ({ searchQuery = '' }) => {
       </View>
       <FlatList
         data={filteredProducts}
-        // keyExtractor={item => item.id.toString()}
         renderItem={renderProduct}
-        // horizontal
-        // showsHorizontalScrollIndicator={false}
         numColumns={2}
         contentContainerStyle={{ paddingVertical: 8 }}
       />

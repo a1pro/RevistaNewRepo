@@ -28,7 +28,7 @@ import { Base_Url } from '../../utils/ApiUrl';
 import styles from './style';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-
+import { useTranslation } from 'react-i18next';
 const { width, height } = Dimensions.get('window');
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProductDetails'>;
@@ -50,6 +50,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const favourites = useSelector(
     (state: RootState) => state.favourite.favourites,
@@ -84,8 +85,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         if (!token) {
           Toast.show({
             type: 'error',
-            text1: 'Error',
-            text2: 'No token found',
+            text1: t("error"),
+            text2: t("noToken"),
           });
           setSimilarLoading(false);
           return;
@@ -119,8 +120,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t("error"),
+          text2: t("noToken"),
         });
         setWishlistLoading(false);
         return;
@@ -137,15 +138,15 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         dispatch(addFavourite(product));
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: res.data.message || 'Product added to wishlist!',
+          text1: t('success'),
+          text2: res.data.message || t("addedtofav"),
         });
 
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data.message || 'Failed to add to wishlist.',
+          text1: t('error'),
+          text2: res.data.message || t("failtofav"),
         });
       }
     } catch (error) {
@@ -167,8 +168,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         setWishlistLoading(false);
         return;
@@ -189,22 +190,22 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         dispatch(removeFavourite({ id: product.id }));
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Product removed from wishlist!',
+          text1: t('success'),
+          text2: t("removefromfav"),
         });
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: res.data.message || 'Failed to remove product from wishlist.',
+          text2: res.data.message || t('fail2'),
         });
       }
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: t('error'),
         text2: (error as any)?.response?.data?.message ||
-          'Failed to remove product from wishlist.',
+          t('fail2'),
       });
 
     } finally {
@@ -218,8 +219,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         setCartLoading(false);
         return;
@@ -237,21 +238,21 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
         dispatch(addCartItem({ ...product, quantity }));
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: res.data.message || 'Product added to cart!',
+          text1: t('success'),
+          text2: res.data.message || t('addtocart'),
         });
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: res.data.message || 'Failed to add to cart.',
+          text2: res.data.message || t("failCart"),
         });
       }
     } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error?.response?.data?.message || 'Error adding to cart.',
+        text2: error?.response?.data?.message || t("erroraddingcart"),
       });
 
     } finally {
@@ -281,8 +282,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
     if (reviewRating === 0 || !reviewComment.trim()) {
       Toast.show({
         type: 'error',
-        text1: 'Validation',
-        text2: 'Please provide a rating and comment.',
+        text1: t('validation'),
+        text2: t('validation22'),
       });
       return;
     }
@@ -292,8 +293,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         setSubmittingReview(false);
         return;
@@ -316,23 +317,23 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
       if (res.data && res.data.message === 'successfully review submitted!') {
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Review submitted!',
+          text1: t('success'),
+          text2: t('reviewSubmitted'),
         });
         closeReviewModal();
         await fetchReviews();
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data.message || 'Failed to submit review.',
+          text1: t('error'),
+          text2: res.data.message || t("failedreview"),
         });
       }
     } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error?.response?.data?.message || 'Error submitting review.',
+        text2: error?.response?.data?.message || t("errorsubmit"),
       });
 
     } finally {
@@ -356,8 +357,8 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to load reviews',
+        text1: t('error'),
+        text2: t('failload'),
       });
 
     } finally {
@@ -384,7 +385,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
             color={COLORS.black}
           />
         </TouchableOpacity>
-        <Text style={localStyles.headerTitle}>Product Details</Text>
+        <Text style={localStyles.headerTitle}>{t("productDetails")}</Text>
         <View style={localStyles.placeholder} />
       </View>
 
@@ -430,7 +431,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
             <TouchableOpacity
               style={localStyles.reviewBtn}
               onPress={openReviewModal}>
-              <Text style={localStyles.reviewBtnText}>Add Review</Text>
+              <Text style={localStyles.reviewBtnText}>{t("addreview")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -438,14 +439,14 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
             {product.unit_price?.toFixed(2)}{' '}
             <Text style={styles.currency}>﷼</Text>
           </Text>
-          <Text style={styles.sectionTitle}>Details</Text>
+          <Text style={styles.sectionTitle}>{t("details")}</Text>
           <Text style={styles.detailsText}>
             {product.details
               ? product.details.replace(/<[^>]+>/g, '')
               : 'No details available.'}
           </Text>
           <View style={styles.quantityRow}>
-            <Text style={styles.sectionTitle}>Quantity</Text>
+            <Text style={styles.sectionTitle}>{t("quantity")}</Text>
             <View style={styles.quantitySelector}>
               <TouchableOpacity
                 style={styles.qtyBtn}
@@ -461,7 +462,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
             </View>
           </View>
         </View>
-        <Text style={styles.sectionTitle}>Similar Products</Text>
+        <Text style={styles.sectionTitle}>{t("similarProducts")}</Text>
         {similarLoading ? (
           <Image
             source={require('../../assets/subcategory/loading.gif')}
@@ -469,7 +470,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           />
         ) : similarProducts.length === 0 ? (
           <Text style={{ color: '#888', marginVertical: 8, marginLeft: 30 }}>
-            No similar product.
+            {t("noSimilar")}
           </Text>
         ) : (
           <ScrollView
@@ -489,7 +490,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
                       (item as { images: string[] }).images.length &&
                       (item as { images: string[] }).images[0] && (item as { images: string[] }).images[0].startsWith('http')
                       ? { uri: (item as { images: string[] }).images[0] }
-                      : IMAGES.revista 
+                      : IMAGES.revista
                   }
                   style={styles.similarImage}
                   resizeMode="cover"
@@ -536,7 +537,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
               style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
             />
           ) : (
-            <Text style={styles.cartBtnText}>Add to Cart</Text>
+            <Text style={styles.cartBtnText}>{t("cart")}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -553,7 +554,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
           onPress={closeReviewModal}
         />
         <View style={localStyles.halfModalContainer}>
-          <Text style={localStyles.modalTitle}>Review</Text>
+          <Text style={localStyles.modalTitle}>{t('review')}</Text>
           <Text style={localStyles.orderText}>
             Order #{product.order_number || 'xxxxxxx'}
           </Text>
@@ -591,7 +592,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
                 style={{ width: 50, height: 50, alignSelf: "center", alignItems: "center" }}
               />
             ) : (
-              <Text style={localStyles.submitBtnText}>Say it!</Text>
+              <Text style={localStyles.submitBtnText}>{t("say")}</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -618,7 +619,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
                 marginBottom: 10,
               }}
             />
-            <Text style={localStyles.modalTitle}>Product Reviews</Text>
+            <Text style={localStyles.modalTitle}>{t('productReview')}</Text>
           </View>
           <ScrollView style={{ flex: 1 }}>
             {reviewsLoading ? (
@@ -628,7 +629,7 @@ const ProductDetails: React.FC<Props> = ({ route, navigation }) => {
               />
             ) : reviews.length === 0 ? (
               <Text style={{ textAlign: 'center', marginTop: 30, color: '#888' }}>
-                No reviews yet.
+                {t('noReview')}
               </Text>
             ) : (
               reviews.map((review, idx) => (

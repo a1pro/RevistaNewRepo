@@ -1,15 +1,16 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import {View} from 'react-native';
-import type {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { View } from 'react-native';
+import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next'; // or your i18n hook
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import AllCategories from '../screens/AllCategories/AllCategories';
 import Profile from '../screens/Profile/Profile';
 import AddtoCart from '../screens/AddtoCart/AddtoCart';
 import Magzine from '../screens/Book/Magzine';
+import COLORS from '../utils/Colors';
 
 // Define types for route names
 type TabParamList = {
@@ -23,15 +24,34 @@ type TabParamList = {
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const BottomNavigator: React.FC = () => {
+  const { t } = useTranslation();
+
+  const getTabLabel = (routeName: keyof TabParamList): string => {
+    switch (routeName) {
+      case 'Home':
+        return t('home');
+      case 'AllCategories':
+        return t('allCategories');
+      case 'Magzine':
+        return t('magazine');
+      case 'AddtoCart':
+        return t('cart');
+      case 'Profile':
+        return t('profile');
+      default:
+        return routeName;
+    }
+  };
+
   return (
     <Tab.Navigator
-      screenOptions={({route}): BottomTabNavigationOptions => ({
+      screenOptions={({ route }): BottomTabNavigationOptions => ({
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: '#0C18BF',
+        tabBarActiveTintColor: '#EDEDED',
         tabBarInactiveTintColor: '#214357',
         tabBarLabelStyle: {
           fontSize: 12,
-          color: '#0C18BF',
+          color: COLORS.revista2,
           marginTop: 5,
         },
         tabBarStyle: {
@@ -41,12 +61,11 @@ const BottomNavigator: React.FC = () => {
           paddingTop: 5,
           paddingBottom: 5,
           height: 70,
-          // marginHorizontal: 10,
-          //   borderRadius: 20,
         },
-        tabBarIcon: ({focused, color}) => {
+        tabBarLabel: getTabLabel(route.name),
+        tabBarIcon: ({ focused, color }) => {
           let iconName: string;
-          let IconComponent: typeof Icon;
+          let IconComponent: typeof Feather;
 
           switch (route.name) {
             case 'Home':
@@ -69,7 +88,6 @@ const BottomNavigator: React.FC = () => {
               iconName = 'book-open';
               IconComponent = Feather;
               break;
-
             default:
               iconName = 'users';
               IconComponent = MaterialIcons;
@@ -89,31 +107,32 @@ const BottomNavigator: React.FC = () => {
             </View>
           );
         },
-      })}>
+      })}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="AllCategories"
         component={AllCategories}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="Magzine"
         component={Magzine}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="AddtoCart"
         component={AddtoCart}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="Profile"
         component={Profile}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
     </Tab.Navigator>
   );

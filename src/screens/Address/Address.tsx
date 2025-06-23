@@ -23,7 +23,7 @@ import VectorIcon from '../../components/VectorIcon';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
-
+import { useTranslation } from 'react-i18next';
 type Props = NativeStackScreenProps<RootStackParamList, 'Address'>;
 
 const Address: React.FC<Props> = ({ navigation }) => {
@@ -40,23 +40,23 @@ const Address: React.FC<Props> = ({ navigation }) => {
   const [address, setAddress] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-
+  const { t } = useTranslation();
   useEffect(() => {
     const getLocation = async () => {
       if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            title: 'Location Permission',
-            message: 'App needs access to your location',
-            buttonPositive: 'OK',
+            title: t('locationPermissionTitle'),
+            message: t('locationPermissionMessage'),
+            buttonPositive: t('ok'),
           }
         );
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           Toast.show({
             type: 'error',
-            text1: 'Permission Denied',
-            text2: 'Enable location to save address',
+            text1: t('permissionDenied'),
+            text2: t('enableLocationToSaveAddress'),
           });
           return;
         }
@@ -70,7 +70,7 @@ const Address: React.FC<Props> = ({ navigation }) => {
         err =>
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: t('error'),
             text2: err.message,
           }),
         { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
@@ -84,8 +84,8 @@ const Address: React.FC<Props> = ({ navigation }) => {
     if (!name || !phone || !billing || !country || !city || !postcode || !address || !latitude || !longitude) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Please fill all fields and ensure location is enabled',
+        text1: t('error'),
+        text2: t('pleaseFillAllFields'),
       });
       return;
     }
@@ -94,8 +94,8 @@ const Address: React.FC<Props> = ({ navigation }) => {
     if (!token) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Authentication token not found',
+        text1: t('error'),
+        text2: t('authenticationTokenNotFound'),
       });
       return;
     }
@@ -143,23 +143,23 @@ const Address: React.FC<Props> = ({ navigation }) => {
         );
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Address saved successfully',
+          text1: t('success'),
+          text2: t('addressSavedSuccessfully'),
         });
         navigation.goBack();
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: data.message || 'Failed to save address',
+          text1: t('error'),
+          text2: data.message || t('failedToSaveAddress'),
         });
       }
     } catch (err) {
       console.error(err);
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to save address',
+        text1: t('error'),
+        text2: t('failedToSaveAddress'),
       });
     }
   };
@@ -171,42 +171,42 @@ const Address: React.FC<Props> = ({ navigation }) => {
           <VectorIcon type="AntDesign" name="left" size={24} color={COLORS.textColor} />
         </TouchableOpacity>
 
-        <Text style={styles.heading}>Shipping Address</Text>
+        <Text style={styles.heading}>{t('shippingAddress')} *</Text>
 
-        <Text style={styles.label}>Contact person name *</Text>
+        <Text style={styles.label}>{t('contactPersonName')} *</Text>
         <CustomInput value={name} onChangeText={setName} placeholder="Enter name" style={styles.input} />
 
-        <Text style={styles.label}>Phone *</Text>
-        <CustomInput value={phone} onChangeText={setPhone} placeholder="Enter phone" keyboardType="phone-pad" style={styles.input} />
+        <Text style={styles.label}>{t('phone')} *</Text>
+        <CustomInput value={phone} onChangeText={setPhone} placeholder={t('enterPhone')} keyboardType="phone-pad" style={styles.input} />
 
-        <Text style={styles.label}>Address type</Text>
+        <Text style={styles.label}>{t('addressType')}</Text>
         <TouchableOpacity style={styles.input} onPress={() => setShowBillingModal(true)}>
           <Text>{billing}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.label}>Country *</Text>
+        <Text style={styles.label}>{t('country')} *</Text>
         <TouchableOpacity style={styles.input} onPress={() => setShowCountryPicker(true)}>
           <Text>{country?.name || 'Select country'}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.label}>City *</Text>
-        <CustomInput value={city} onChangeText={setCity} placeholder="Enter city" style={styles.input} />
+        <Text style={styles.label}>{t('city')} *</Text>
+        <CustomInput value={city} onChangeText={setCity} placeholder={t('enterCity')} style={styles.input} />
 
-        <Text style={styles.label}>Zip code *</Text>
-        <CustomInput value={postcode} onChangeText={setPostcode} placeholder="Enter zip code" keyboardType="numeric" style={styles.input} />
+        <Text style={styles.label}>{t('zipCode')} *</Text>
+        <CustomInput value={postcode} onChangeText={setPostcode} placeholder={t('enterZipCode')} keyboardType="numeric" style={styles.input} />
 
-        <Text style={styles.label}>Address *</Text>
-        <CustomInput value={address} onChangeText={setAddress} placeholder="Enter address" style={styles.input} />
+        <Text style={styles.label}>{t('address')} *</Text>
+        <CustomInput value={address} onChangeText={setAddress} placeholder={t('enterAddress')}  style={styles.input} />
 
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-          <Text style={styles.saveBtnText}>Save Changes</Text>
+          <Text style={styles.saveBtnText}>{t('saveChanges')}</Text>
         </TouchableOpacity>
 
         {/* Address type Modal */}
         <Modal visible={showBillingModal} transparent animationType="slide">
           <TouchableOpacity style={styles.modalOverlay} onPress={() => setShowBillingModal(false)}>
             <View style={styles.modalContent}>
-              {['Permanent', 'Home', 'Others'].map(type => (
+               {[t('permanent'), t('home'), t('others')].map(type => (
                 <TouchableOpacity key={type} onPress={() => { setBilling(type); setShowBillingModal(false); }}>
                   <Text style={styles.modalItem}>{type}</Text>
                 </TouchableOpacity>
@@ -228,8 +228,8 @@ const Address: React.FC<Props> = ({ navigation }) => {
           onSelect={country => {
             setCountry(country);
             setShowCountryPicker(false);
-          } } countryCodes={''}
-      />
+          }} countryCodes={''}
+        />
       </ScrollView>
     </SafeAreaView>
   );

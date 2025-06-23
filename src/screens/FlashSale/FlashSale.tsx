@@ -17,7 +17,7 @@ import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.4;
 
@@ -37,6 +37,7 @@ const PRODUCT_IMAGE_MAP: Record<string, any> = {
 };
 
 const FlashSale: React.FC = () => {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [timer, setTimer] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, ended: false });
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -50,8 +51,8 @@ const FlashSale: React.FC = () => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         console.error('No token found');
         return;
@@ -167,9 +168,9 @@ const renderProduct = ({ item }: { item: Product }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Flash Deal</Text>
+        <Text style={styles.headerTitle}>{t('flashDeal')}</Text>
         <TouchableOpacity style={styles.viewAllBtn}>
-          <Text style={styles.viewAllText}>See All</Text>
+          <Text style={styles.viewAllText}>{t("seeAll")}</Text>
           <VectorIcon
             size={20}
             type="Ionicons"
@@ -182,7 +183,7 @@ const renderProduct = ({ item }: { item: Product }) => {
       {/* TIMER */}
       <View style={styles.timerContainer}>
         {timer.ended ? (
-          <Text style={styles.timerEnded}>Flash Sale Ended</Text>
+          <Text style={styles.timerEnded}>{t("saleEnd")}</Text>
         ) : (
           <>
             <View style={styles.timerBoxRow}>
