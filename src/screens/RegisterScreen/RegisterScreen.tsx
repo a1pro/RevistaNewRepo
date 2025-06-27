@@ -23,10 +23,12 @@ import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import {signupValidationSchema} from '../../utils/singupValidation';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
 const RegisterScreen: React.FC<Props> = ({navigation}) => {
+   const { t } = useTranslation(); 
   const handleSignup = async (values: {
     first_name: string;
     last_name: string;
@@ -50,8 +52,8 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
       if (res?.data) {
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Signup Successful!',
+          text1: t("success"),
+          text2: t('signup'),
         });
         navigation.navigate('Login');
       }
@@ -59,8 +61,8 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
       console.log('Login error:', error);
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error?.response?.data?.message || 'Something went wrong',
+        text1: t('error'),
+        text2: error?.response?.data?.message || t("wrong"),
       });
      
     }
@@ -85,14 +87,14 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
                 color={COLORS.textColor}
                 fontWeight="bold"
                 style={{textAlign: 'center'}}>
-                Create
+                {t("create")}
               </CustomText>
               <CustomText
                 type="heading"
                 color={COLORS.textColor}
                 fontWeight="bold"
                 style={{textAlign: 'center'}}>
-                Account
+                {t("account")}
               </CustomText>
             </View>
 
@@ -174,7 +176,7 @@ const RegisterScreen: React.FC<Props> = ({navigation}) => {
                       type="small"
                       color={COLORS.titleColor}
                       style={{textAlign: 'center'}}>
-                      Already have an account? Sign In
+                      {t("alreadyAccount")}
                     </CustomText>
                     <VectorIcon
                       size={30}

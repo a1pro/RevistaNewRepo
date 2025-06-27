@@ -66,8 +66,6 @@ const MagzineProduct: React.FC = () => {
 
     fetchProducts();
   }, [categoryId]);
-
-  // Set header with back button
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (

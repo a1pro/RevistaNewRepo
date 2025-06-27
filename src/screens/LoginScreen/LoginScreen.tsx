@@ -17,13 +17,15 @@ import {Formik} from 'formik';
 import axios from 'axios';
 import {Base_Url} from '../../utils/ApiUrl';
 import {useAuth} from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+
 import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({navigation}) => {
   const {login} = useAuth();
-
+   const { t } = useTranslation(); 
   const handleLogin = async (values: {email: string; password: string}) => {
     try {
       const res = await axios({
@@ -41,8 +43,8 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         console.log('Login response:', res.data);
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Login Successful!',
+          text1: t('success'),
+          text2: t('login'),
         });
         navigation.replace('Dashboard');
       }
@@ -50,8 +52,8 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
       console.log('Login error:', error);
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error?.response?.data?.message || 'Something went wrong',
+        text1: t("error"),
+        text2: error?.response?.data?.message || t('wrong'),
       });
     }
   };
@@ -69,14 +71,14 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
               color={COLORS.textColor}
               fontWeight="bold"
               style={{textAlign: 'center', marginBottom: 10}}>
-              Login
+              {t('login2')}
             </CustomText>
             <View style={styles.heartView}>
               <CustomText
                 type="subTitle"
                 color={COLORS.titleColor}
                 style={{textAlign: 'center'}}>
-                Good to see you back!
+                {t("goodtosee")}
               </CustomText>
               <VectorIcon
                 size={30}
@@ -128,14 +130,14 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
                         marginRight: verticalScale(10),
                       }}
                       onPress={() => navigation.navigate('Forgot')}>
-                      Forgot your password?
+                      {t("forgotPass")}
                     </CustomText>
                   </View>
 
                   <CustomButton
                     style={{marginTop: verticalScale(50)}}
                     textSize="small"
-                    title="Next"
+                    title={t("next")}
                     onPress={handleSubmit}
                   />
                 </>
@@ -150,7 +152,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
                 marginTop: verticalScale(10),
               }}>
               <CustomText type="small" color={COLORS.titleColor}>
-                Don't have an account? Sign Up
+                {t('noaccount')}
               </CustomText>
               <VectorIcon
                 size={30}

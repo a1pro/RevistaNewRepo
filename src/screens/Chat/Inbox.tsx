@@ -98,7 +98,6 @@ const Inbox: React.FC = () => {
           ))}
         </View>
 
-        {/* Search */}
         <View style={styles.searchRow}>
           <TextInput
             style={styles.searchInput}
@@ -108,7 +107,6 @@ const Inbox: React.FC = () => {
           />
         </View>
 
-        {/* Chat List */}
         <FlatList
           data={filteredChats}
           keyExtractor={item => item.id}
