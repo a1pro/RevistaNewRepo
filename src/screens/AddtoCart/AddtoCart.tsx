@@ -67,6 +67,7 @@ const AddtoCart: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCartItems(Array.isArray(res.data) ? res.data : []);
+      console.log("datta cart",res.data)
     } catch (err) {
       console.log('Error fetching cart:', err);
     } finally {

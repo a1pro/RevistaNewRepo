@@ -132,8 +132,10 @@ const LatestProduct: React.FC<LatestProductProps> = ({ searchQuery = '' }) => {
       <FlatList
         data={filteredProducts}
         renderItem={renderProduct}
-        numColumns={2}
-        contentContainerStyle={{ paddingVertical: 8 }}
+         keyExtractor={item => item.id.toString()}
+         horizontal={true}
+         showsHorizontalScrollIndicator={false}
+         contentContainerStyle={{ paddingHorizontal: 8 }}
       />
     </View>
   );

@@ -1,18 +1,17 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
+import { View, Text, Image, TouchableOpacity, Platform } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { View } from 'react-native';
-import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
-import { useTranslation } from 'react-i18next'; // or your i18n hook
+import { useTranslation } from 'react-i18next';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import AllCategories from '../screens/AllCategories/AllCategories';
 import Profile from '../screens/Profile/Profile';
 import AddtoCart from '../screens/AddtoCart/AddtoCart';
 import Magzine from '../screens/Book/Magzine';
 import COLORS from '../utils/Colors';
+import IMAGES from '../assets/images';
 
-// Define types for route names
 type TabParamList = {
   Home: undefined;
   AddtoCart: undefined;
@@ -22,6 +21,56 @@ type TabParamList = {
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
+
+const CustomTabBarButton = ({ onPress }) => (
+  <TouchableOpacity
+    activeOpacity={1}
+    onPress={onPress}
+    style={{
+      top: -30,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.12,
+          shadowRadius: 5,
+        },
+        android: {
+          elevation: 8,
+        },
+      }),
+    }}
+  >
+    <View
+      style={{
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        backgroundColor: COLORS.revista2 || '#6C726E',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Image
+        source={IMAGES.icon}
+        style={{ width: 58, height: 58,top:10 }}
+        resizeMode="contain"
+      />
+      <Text
+        style={{
+          color: '#fff',
+          fontSize: 13,
+          fontWeight: 'bold',
+          marginTop: 2,
+        }}
+      >
+        {/* You can add {t('magazine')} here if you want */}
+      </Text>
+    </View>
+  </TouchableOpacity>
+);
 
 const BottomNavigator: React.FC = () => {
   const { t } = useTranslation();
@@ -45,25 +94,29 @@ const BottomNavigator: React.FC = () => {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }): BottomTabNavigationOptions => ({
+      screenOptions={({ route }) => ({
+        tabBarShowLabel: true,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: '#EDEDED',
+        tabBarActiveTintColor: COLORS.revista2 || '#6C726E',
         tabBarInactiveTintColor: '#214357',
         tabBarLabelStyle: {
           fontSize: 12,
-          color: COLORS.revista2,
           marginTop: 5,
         },
         tabBarStyle: {
-          backgroundColor: '#ffff',
+          backgroundColor: '#fff',
           borderTopWidth: 0,
-          shadowRadius: 10,
-          paddingTop: 5,
-          paddingBottom: 5,
           height: 70,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -5 },
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+          elevation: 10, // For Android
         },
-        tabBarLabel: getTabLabel(route.name),
         tabBarIcon: ({ focused, color }) => {
+          if (route.name === 'Magzine') {
+            return null; // CustomTabBarButton handles the icon and label
+          }
           let iconName: string;
           let IconComponent: typeof Feather;
 
@@ -84,26 +137,14 @@ const BottomNavigator: React.FC = () => {
               iconName = 'shopping-cart';
               IconComponent = Feather;
               break;
-            case 'Magzine':
-              iconName = 'book-open';
-              IconComponent = Feather;
-              break;
             default:
               iconName = 'users';
               IconComponent = MaterialIcons;
           }
 
           return (
-            <View
-              style={{
-                backgroundColor: focused ? '#ffff' : '#ffff',
-                borderRadius: 30,
-                width: 46,
-                height: 46,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <IconComponent name={iconName} size={22} color={color} />
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <IconComponent name={iconName} size={26} color={color} />
             </View>
           );
         },
@@ -122,7 +163,10 @@ const BottomNavigator: React.FC = () => {
       <Tab.Screen
         name="Magzine"
         component={Magzine}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarButton: (props) => <CustomTabBarButton {...props} />,
+        }}
       />
       <Tab.Screen
         name="AddtoCart"

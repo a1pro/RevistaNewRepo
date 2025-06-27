@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import COLORS from '../../utils/Colors';
 
 export default StyleSheet.create({
   container: {
@@ -94,7 +95,7 @@ emptyCartText: {
     marginBottom:20
   },
   checkoutBtn: {
-    backgroundColor: '#007bff',
+    backgroundColor:COLORS.revista2,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -105,14 +106,14 @@ emptyCartText: {
     fontSize: 16,
   },
   clearCartBtn: {
-  backgroundColor: '#ff4444',
+  backgroundColor: COLORS.revista,
   borderRadius: 8,
   paddingHorizontal: 16,
   paddingVertical: 10,
   alignItems: 'center',
 },
 clearCartText: {
-  color: '#fff',
+  color: "#fff",
   fontWeight: 'bold',
   fontSize: 16,
 },

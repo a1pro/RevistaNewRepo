@@ -29,7 +29,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Base_Url } from '../../utils/ApiUrl';
 import Toast from 'react-native-toast-message';
-
+import { useTranslation } from 'react-i18next';
 // Replace with your actual storage base URL
 const STORAGE_BASE_URL = 'https://revista-sa.com/storage/app/public/profile/';
 
@@ -45,7 +45,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
   const [imageAsset, setImageAsset] = useState<Asset | null>(null); // To keep the picked image asset
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+ const { t } = useTranslation();
   useEffect(() => {
     if (route.params?.userData) {
       const user = route.params.userData;
@@ -87,8 +87,8 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         setLoading(false);
         return;
@@ -129,7 +129,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
       if (response.data && response.data.message) {
         Toast.show({
           type: 'success',
-          text1: 'Success',
+          text1: t('success'),
           text2: response.data.message,
         });
         Alert.alert('Success', response.data.message, [
@@ -138,15 +138,15 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'Profile update failed',
+          text1:t('error') ,
+          text2: t("profilefail"),
         });
       }
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error?.response?.data?.message || 'Something went wrong',
+        text1: t('error'),
+        text2: error?.response?.data?.message || t("wrong"),
       });
 
     } finally {
@@ -176,7 +176,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
             color={COLORS.textColor}
             fontWeight="bold"
             style={styles.headerText}>
-            My Profile
+            {t("myprofile")}
           </CustomText>
 
           {/* Profile Image with Edit Icon */}
@@ -194,7 +194,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
             style={styles.label}
             fontWeight="bold"
             color={COLORS.textColor}>
-            Name
+            {t("name")}
           </CustomText>
           <CustomInput
             value={name}
@@ -206,7 +206,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
             style={styles.label}
             fontWeight="bold"
             color={COLORS.textColor}>
-            Last Name
+            {t("lastname")}
           </CustomText>
           <CustomInput
             value={lastName}
@@ -218,7 +218,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
             style={styles.label}
             fontWeight="bold"
             color={COLORS.textColor}>
-            Phone Number
+            {t("phoneNumber")}
           </CustomText>
           <CustomInput
             value={phoneNumber}
@@ -248,7 +248,7 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
             style={styles.label}
             fontWeight="bold"
             color={COLORS.textColor}>
-            Password
+            {t("password")}
           </CustomText>
           <CustomInput
             value={password}
@@ -284,21 +284,21 @@ const EditProfile: React.FC<Props> = ({ navigation, route }) => {
                   style={styles.modalOption}
                   onPress={() => handleImagePick('camera')}>
                   <CustomText color={COLORS.textColor} fontWeight="bold">
-                    Camera
+                    {t("camera")}
                   </CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.modalOption}
                   onPress={() => handleImagePick('gallery')}>
                   <CustomText color={COLORS.textColor} fontWeight="bold">
-                    Gallery
+                    {t("gallery")}
                   </CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalOption, { borderBottomWidth: 0 }]}
                   onPress={() => setModalVisible(false)}>
                   <CustomText color="red" fontWeight="bold">
-                    Cancel
+                    {t("cancel")}
                   </CustomText>
                 </TouchableOpacity>
               </View>

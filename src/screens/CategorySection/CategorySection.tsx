@@ -1,202 +1,201 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
   FlatList,
+  Image,
   TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import VectorIcon from '../../components/VectorIcon';
-import COLORS from '../../utils/Colors';
-import {verticalScale} from '../../utils/Metrics';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
 import axios from 'axios';
-import {Base_Url} from '../../utils/ApiUrl';
+import { Base_Url } from '../../utils/ApiUrl';
 import IMAGES from '../../assets/images';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-interface Category {
-  product_count: string;
-  id: string;
-  name: string;
-  count: number;
-  icon: string;
-}
-
-const CATEGORY_IMAGE_MAP: Record<string, any> = {
-  perfume: IMAGES.perfume1,
-  'mini perfume': IMAGES.perfume1,
-  'hair mist': IMAGES.perfume2,
-  'body perfumes': IMAGES.perfume4,
-  'new perfumes': IMAGES.perfume5,
-  'unisex perfumes': IMAGES.perfume6,
-  'musk perfumes': IMAGES.perfume7,
-  'oud perfumes': IMAGES.perfume9,
-  "children's perfumes": IMAGES.perfume8,
+type SubCategory = {
+  id: number;
+  title: string;
+  image: string;
 };
 
-const ICON_BASE_URL = 'https://revista-sa.com/storage/app/public/category/';
-const DEFAULT_ICON_URL = ICON_BASE_URL + 'def.png';
+export type Category = {
+  id: number;
+  title: string;
+  image: string;
+  price: string; // Add price field
+  subCategories: SubCategory[];
+};
 
-const CategorySection: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'AllCategories'>;
+
+const DEFAULT_ICON_URL = 'https://www.revista-sa.com/public/storage/category/def.png';
+
+const CategorySection: React.FC<Props> = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigation=useNavigation()
 
-  const fetchCategories = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      if (!token) {
-        console.error('No token found');
-        return;
+  
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(Base_Url.allcategory);
+        const mappedCategories: Category[] = res.data.map((cat: any) => ({
+          id: cat.id,
+          title: cat.name,
+          image: cat.icon || DEFAULT_ICON_URL,
+          price: cat.price || '400.00 SAR', // Use actual price if available
+          subCategories: (cat.childes || []).map((sub: any) => ({
+            id: sub.id,
+            title: sub.name,
+            image: sub.icon || DEFAULT_ICON_URL,
+          })),
+        }));
+        setCategories(mappedCategories);
+      } catch (error) {
+        setCategories([]);
+      } finally {
+        setLoading(false);
       }
-
-      const res = await axios.get(Base_Url.categories, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (res.data) {
-        setCategories(res.data);
-      }
-    } catch (error) {
-      console.log('Error fetching categories:', error);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-    fetchCategories();
-   }, [])
-)
-
-  const renderCategory = ({item}: {item: Category}) => {
-    const isValidApiIcon = item.icon && item.icon !== 'def.png';
-    const staticImage =
-      CATEGORY_IMAGE_MAP[item.name.toLowerCase()] || IMAGES.perfume10;
+    };
+ 
 
 
-    let imageSource;
-    if (isValidApiIcon) {
-      imageSource = item.icon.startsWith('http')
-        ? {uri: item.icon}
-        : {uri: ICON_BASE_URL + item.icon};
-    } else if (staticImage) {
-      imageSource = staticImage;
-    } else {
-      imageSource = IMAGES.perfume10;
-    }
-
-    return (
-      <View style={styles.categoryBox}>
-        <View style={styles.imageGrid}>
-          <Image source={imageSource} style={styles.image} resizeMode="cover" />
-        </View>
-        <View style={styles.labelRow}>
-          <Text style={styles.categoryText}>{item.name}</Text>
-          <View style={styles.countPill}>
-            <Text style={styles.countText}>{item.product_count}</Text>
-          </View>
-        </View>
-      </View>
+    useFocusEffect(
+      useCallback(() => {
+        fetchCategories();
+      }, [])
     );
-  };
+  const renderItem = ({ item }: { item: Category }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('SubCategories', { category: item })}
+    >
+      <Image
+        source={{ uri: item.image }}
+        style={styles.image}
+        defaultSource={IMAGES.beauty}
+        onError={e => {
+          e.currentTarget.setNativeProps({
+            src: [{ uri: DEFAULT_ICON_URL }],
+          });
+        }}
+      />
+      <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+      <Text style={styles.price}>{item.price}</Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  
+  const firstRow = categories.slice(0, 7);
+  const secondRow = categories.slice(7, 14);
 
   return (
-
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-
-        <View style={styles.header}>
-          <Text style={styles.title}>Popular Categories</Text>
-          <TouchableOpacity style={styles.seeAllButton}>
-            <Text style={styles.seeAllText}>See All</Text>
-            <VectorIcon
-              size={30}
-              type="Ionicons"
-              name="arrow-forward-circle"
-              color={COLORS.black}
-              style={{marginLeft: verticalScale(10)}}
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <FlatList
-            data={categories}
-            keyExtractor={item => item.id}
-            renderItem={renderCategory}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-
-          />
-        </View>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>Categories</Text>
+        <TouchableOpacity style={styles.seeAllRow} onPress={()=>navigation.navigate("AllCategories")}>
+          <Text style={styles.seeAll}>See All</Text>
+          <Text style={styles.arrow}>→</Text>
+        </TouchableOpacity>
       </View>
+      <FlatList
+        data={firstRow}
+        keyExtractor={item => item.id.toString()}
+        renderItem={renderItem}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+      />
+      <FlatList
+        data={secondRow}
+        keyExtractor={item => item.id.toString()}
+        renderItem={renderItem}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+      />
     </SafeAreaView>
   );
 };
 
-const IMAGE_SIZE = 75;
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#fff',
-    marginTop: verticalScale(20),
-  },
-  header: {
-    marginBottom: 12,
+  container: { backgroundColor: '#fff', paddingVertical: 12 },
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  seeAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  seeAllText: {
-    color: '#007bff',
-    marginRight: 4,
-  },
-  categoryBox: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    marginRight: 12,
-    padding: 10,
-    width: 180,
-  },
-  imageGrid: {
-    alignItems: 'center',
+    marginHorizontal: 12,
     marginBottom: 8,
   },
-  image: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-    borderRadius: 8,
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#222',
   },
-  labelRow: {
+  seeAllRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  categoryText: {
-    fontWeight: '600',
-    fontSize: 14,
+  seeAll: {
+    fontSize: 16,
+    color: '#007AFF',
+    marginRight: 4,
   },
-  countPill: {
-    backgroundColor: '#e0e0e0',
+  arrow: {
+    fontSize: 18,
+    color: '#007AFF',
+  },
+  flatListContent: {
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 20,
   },
-  countText: {
+  card: {
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    marginHorizontal: 8,
+    marginVertical: 4,
+    borderRadius: 12,
+    width: 90,
+    paddingVertical: 8,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+  },
+  image: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: '#eee',
+    backgroundColor: '#eee',
+  },
+  title: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  price: {
     fontSize: 12,
-    fontWeight: '600',
+    color: '#888',
+    textAlign: 'center',
   },
 });
 

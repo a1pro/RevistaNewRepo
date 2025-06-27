@@ -78,6 +78,7 @@ const IMAGES = {
   sport: require('../subcategory/sport.jpg'),
   defaultbanner: require('../subcategory/defaultBaner.jpg'),
   myfatoorah: require('../subcategory/fatoorah.png'),
+  icon: require('../subcategory/Revistaicon.png'),
 };
 
 export default IMAGES;

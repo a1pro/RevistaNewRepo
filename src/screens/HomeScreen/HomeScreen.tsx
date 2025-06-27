@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { View, SafeAreaView, Image, ScrollView, TextInput, ActivityIndicator } from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  Image,
+  ScrollView,
+  TextInput,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,6 +23,16 @@ import CategorySection from '../CategorySection/CategorySection';
 import LatestProduct from './LatestProduct';
 import FlashSale from '../FlashSale/FlashSale';
 import TopSeller from './TopSeller';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Base_Url } from '../../utils/ApiUrl';
+import axios from 'axios';
+
+type CartItem = {
+  id: number;
+  product_id: number;
+  quantity: number;
+  // Add other fields as needed from your API
+};
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -21,6 +40,28 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  const fetchCart = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        setCartItems([]);
+        return;
+      }
+      const res = await axios.get(Base_Url.getcart, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Ensure res.data is an array, or set to empty array if not
+      setCartItems(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.log('Error fetching cart:', err);
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const refreshHomeData = useCallback(() => {
     setLoading(true);
@@ -29,17 +70,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }, 2000);
   }, []);
 
-  useFocusEffect(useCallback(() => {
-    refreshHomeData();
-  }, [refreshHomeData]));
+  // Use both cart fetch and home refresh on focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshHomeData();
+      fetchCart();
+    }, [])
+  );
 
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-         <Image
-        source={require('../../assets/subcategory/loading.gif')}
-        style={{ width: 500, height: 500 }}
-      />
+        <Image
+          source={require('../../assets/subcategory/loading.gif')}
+          style={{ width: 500, height: 500 }}
+        />
       </SafeAreaView>
     );
   }
@@ -47,30 +92,48 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={{ paddingHorizontal: horizontalScale(10) }}>
-          <View style={styles.header}>
-            <VectorIcon
-              size={25}
-              type="AntDesign"
-              name="hearto"
-              color={COLORS.black}
-              onPress={() => navigation.navigate('WishList')}
-            />
-            <Image
-              source={IMAGES.revista}
-              resizeMode="contain"
-              style={styles.logoImg}
-            />
-            <View style={{ flexDirection: 'row', gap: horizontalScale(10) }}>
-              <VectorIcon
-                size={25}
-                type="Feather"
-                name="search"
-                color={COLORS.black}
+        <View style={{ paddingBottom: verticalScale(20) }}>
+          {/* Custom Header */}
+          <View style={styles.headerContainer}>
+            {/* Left Side: Cart with badge and Search */}
+            <View style={styles.leftIcons}>
+              <TouchableOpacity onPress={() => navigation.navigate('AddtoCart')}>
+                <View>
+                  <VectorIcon
+                    size={28}
+                    type="Feather"
+                    name="shopping-cart"
+                    color="#555"
+                  />
+                  {cartItems.length > 0 && (
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>{cartItems.length}</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
                 onPress={() => {
-                  setShowSearch(prev => !prev);
+                  setShowSearch((prev) => !prev);
                   if (!showSearch) setSearchQuery('');
                 }}
+              >
+                <VectorIcon
+                  size={32}
+                  type="Feather"
+                  name="search"
+                  color="#555"
+                  style={{ marginLeft: 18 }}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.revistaText}>Revista</Text>
+            {/* Right Side: Image */}
+            <View style={styles.rightBrand}>
+              <Image
+                source={IMAGES.icon}
+                style={styles.logoImg}
+                resizeMode="contain"
               />
             </View>
           </View>
@@ -99,8 +162,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           ) : (
             <>
               <BannerSlider />
+              <CategorySection />
+              <BannerSlider />
               <HandmadeProducts />
-              <FlashSale />
+              {/* <FlashSale /> */}
               <TopSeller />
               <LatestProduct searchQuery={searchQuery} />
             </>

@@ -100,6 +100,31 @@
   "noReview":"No reviews yet.",
   "allCategories": "Categories",
   "magazine": "Magazine",
-  "profile": "Profile"
+  "profile": "Profile",
+  "login":"Login Successful!",
+  "login2":"Login",
+  "wrong":"Something went wrong",
+  "goodtosee":"Good to see you back!",
+  "forgotPass":"Forgot your password",
+  "next":"Next",
+  "noaccount":"Don't have an account? Sign Up",
+  "signup":"'Signup Successful!'",
+  "create":"Create",
+  "account":"Account",
+  "alreadyAccount":"Already have an account? Sign In",
+  "clearWishlist":"Wishlist cleared!",
+  "failClear":"Failed to clear wishlist.",
+  "failtoclear":"Your wishlist is empty",
+  "clear":"Clear Wishlist",
+  "profilefail":"Profile update failed",
+  "myprofile":"My Profile",
+  "name":"Name",
+  "lastname":"Last Name",
+  "phoneNumber":"Phone Number",
+  "password":"Password",
+  "camera":"Camera",
+  "gallery":"Gallery"
+  
+
 
 }

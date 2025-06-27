@@ -23,6 +23,7 @@ import { Base_Url } from '../../utils/ApiUrl';
 import { removeFavourite } from '../../redux/slice/favouriteSlice';
 import VectorIcon from '../../components/VectorIcon';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WishList'>;
 
@@ -48,7 +49,7 @@ const WishList: React.FC<Props> = ({ navigation }) => {
   const [error, setError] = useState<string | null>(null);
   const [cartLoading, setCartLoading] = useState<number | null>(null);
   const [clearLoading, setClearLoading] = useState(false);
-
+ const { t } = useTranslation(); 
   useEffect(() => {
     fetchWishlist();
   }, []);
@@ -84,8 +85,8 @@ const WishList: React.FC<Props> = ({ navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t("error"),
+          text2: t("noToken"),
         });
         setCartLoading(null);
         return;
@@ -102,8 +103,8 @@ const WishList: React.FC<Props> = ({ navigation }) => {
       if (res.data && res.data.message === 'Successfully added!') {
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: res.data.message || 'Product added to cart!',
+          text1: t("success"),
+          text2: res.data.message || t("addtocart"),
         });
         dispatch(
           addCartItem({
@@ -118,14 +119,14 @@ const WishList: React.FC<Props> = ({ navigation }) => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: res.data.message || 'Failed to add to cart.',
+          text2: res.data.message || t("failCart"),
         });
       }
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error?.response?.data?.message || 'Error adding to cart.',
+        text1: t("error"),
+        text2: error?.response?.data?.message || t("erroraddingcart"),
       });
 
     } finally {
@@ -140,8 +141,8 @@ const WishList: React.FC<Props> = ({ navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t("error"),
+          text2: t("noToken"),
         });
         setLoading(false);
         return;
@@ -166,23 +167,23 @@ const WishList: React.FC<Props> = ({ navigation }) => {
         dispatch(removeFavourite({ id: product_id }));
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Product removed from wishlist!',
+          text1: t('success'),
+          text2: t("removefromfav"),
         });
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: res.data?.message || 'Failed to remove product from wishlist.',
+          text2: res.data?.message || t("fail2"),
         });
 
       }
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: t('error'),
         text2: error?.response?.data?.message ||
-          'Failed to remove product from wishlist.',
+         t("fail2"),
       });
 
     } finally {
@@ -197,8 +198,8 @@ const WishList: React.FC<Props> = ({ navigation }) => {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: 'No token found',
+          text1: t('error'),
+          text2: t("noToken"),
         });
         setClearLoading(false);
         return;
@@ -220,22 +221,22 @@ const WishList: React.FC<Props> = ({ navigation }) => {
         setWishlistItems([]);
         Toast.show({
           type: 'success',
-          text1: 'Success',
-          text2: 'Wishlist cleared!',
+          text1: t('success'),
+          text2: t("clearWishlist"),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: res.data?.message || 'Failed to clear wishlist.',
+          text1: t('error'),
+          text2: res.data?.message || t("failClear"),
         });
       }
     } catch (err: any) {
       console.error('Clear wishlist error:', err);
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: err?.response?.data?.message || 'Failed to clear wishlist.',
+        text1: t('error'),
+        text2: err?.response?.data?.message || t("failClear"),
       });
 
     } finally {
@@ -287,7 +288,7 @@ const WishList: React.FC<Props> = ({ navigation }) => {
               />
             ) : (
               <CustomText color="#fff" fontWeight="bold" style={{ fontSize: 13 }}>
-                Add to Cart
+                {t("cart")}
               </CustomText>
             )}
           </TouchableOpacity>
@@ -340,7 +341,7 @@ const WishList: React.FC<Props> = ({ navigation }) => {
           color={COLORS.textColor}
           fontWeight="bold"
           style={styles.header}>
-          Wishlist
+          {t("wishlist")}
         </CustomText>
 
         <FlatList
@@ -350,7 +351,7 @@ const WishList: React.FC<Props> = ({ navigation }) => {
           renderItem={renderItem}
           ListEmptyComponent={
             <CustomText style={styles.emptyText}>
-              Your wishlist is empty
+              {t("failtoclear")}
             </CustomText>
           }
         />
@@ -367,7 +368,7 @@ const WishList: React.FC<Props> = ({ navigation }) => {
               />
             ) : (
               <CustomText color="#fff" fontWeight="bold">
-                Clear Wishlist
+                {t("clear")}
               </CustomText>
             )}
           </TouchableOpacity>
