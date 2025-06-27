@@ -116,7 +116,7 @@ const Inbox: React.FC = () => {
             <TouchableOpacity
               style={styles.chatItem}
               onPress={() => navigation.navigate('ChatScreen', {user: item})}>
-              <Image source={item.avatar} style={styles.avatar} />
+              <Image source={IMAGES.profile} style={styles.avatar} />
               <View style={{flex: 1, marginLeft: 12}}>
                 <Text style={styles.chatName}>{item.name}</Text>
                 <Text style={styles.chatMsg}>{item.lastMessage}</Text>
